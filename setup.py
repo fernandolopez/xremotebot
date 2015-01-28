@@ -9,11 +9,17 @@ setup(
     packages = find_packages(),
 
     install_requires = [
-        'tornado'
+        'tornado',
+    ],
+
+    tests_require = [
+        'nose',
+        'pyinotify',
+        'sniffer',
     ],
 
 
-    test_suite = 'tests',
+    test_suite = 'sniffer.main',
 
     author = 'Fernando López',
     author_email = 'fernando.e.lopez@gmail.com',

@@ -1,3 +1,9 @@
+
+def get_ws_url(tornado_test_case, uri):
+    return tornado_test_case.get_url(uri).replace('http', 'ws', 1)
+
+# FIXME
+"""
 import os
 import re
 import sys
@@ -14,5 +20,6 @@ def find(path, pattern):
 
 source_files = find('..', re.compile(r'.+\.py$'))
 
-#if sys.path[0] != '' and os.path.basename(sys.path[0]) == 'tests':
-#    sys.path.insert(0, os.path.realpath(os.path.join(sys.path[0], '..')))
+if sys.path[0] != '' and os.path.basename(sys.path[0]) == 'tests':
+    sys.path.insert(0, os.path.realpath(os.path.join(sys.path[0], '..')))
+"""

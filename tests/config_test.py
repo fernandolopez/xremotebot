@@ -9,6 +9,11 @@ class ConfigTest(unittest.TestCase):
             'secret = "{}"\n'.format('x' * 40)
         )
 
+    def appendcfg(self, lines):
+        self.cfgstr.seek(0, 2)
+        self.cfgstr.write(lines)
+        self.cfgstr.seek(0)
+
     def test_secret_is_required(self):
         with self.assertRaises(config.ConfigRequiredFieldError):
             cfg = config.Config(io.StringIO())
@@ -23,15 +28,16 @@ class ConfigTest(unittest.TestCase):
                 io.StringIO('secret = "{}"'.format('x' * 40)))
 
     def test_mode_should_be_valid(self):
-        self.cfgstr.seek(0, 2)
-        self.cfgstr.write('mode = foobar\n')
-        self.cfgstr.seek(0)
+        self.appendcfg('mode = foobar\n')
         with self.assertRaises(config.ConfigValueError):
             cfg = config.Config(self.cfgstr)
 
     def test_mode_defaults_to_standalone(self):
         cfg = config.Config(self.cfgstr)
         self.assertEqual('standalone', cfg['mode'])
+
+    def test_comments_are_ignored(self):
+        self.appendcfg('#Comment\n# Best style\n## Still valid\n \t  # Blanks')
 
 if __name__ == '__main__':
     unittest.main()
