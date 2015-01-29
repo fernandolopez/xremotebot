@@ -3,6 +3,12 @@
 
 from setuptools import setup, find_packages
 
+test_deps = [
+    'nose',
+    'pyinotify',
+    'sniffer',
+]
+
 setup(
     name = 'remotebot',
     version = '1.0',
@@ -12,14 +18,14 @@ setup(
         'tornado',
     ],
 
-    tests_require = [
-        'nose',
-        'pyinotify',
-        'sniffer',
-    ],
+    extras_require = {
+        'testing': test_deps,   # for requirements-dev.txt
+    },
 
+    tests_require = test_deps,
 
     test_suite = 'sniffer.main',
+
 
     author = 'Fernando López',
     author_email = 'fernando.e.lopez@gmail.com',
