@@ -3,26 +3,21 @@
 '''Manejador de conexiones con websockets
 por el momento es un echo server
 '''
-import tornado.websocket
 import json
+import logging
 
-from remotebot.lib.message import error
+import tornado.websocket
 
-def load_message(message):
-    obj = json.loads(message)
+from remotebot.lib.message import error, valid_client_message
 
-def login(message):
-    return True
+logger = logging.getLogger('remotebot')
 
-def authenticate(controller, message):
-    if controller.authenticated or login(message):
-        yield
 
 class WSHandler(tornado.websocket.WebSocketHandler):
 
     def __init__(self, *args, **kwargs):
+        # FIXME
         super(WSHandler, self).__init__(*args, **kwargs)
-        self.authenticated = tornado.web.authenticated
 
     def on_open(self):
         self.authenticated = False
@@ -30,13 +25,23 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     # FIXME: Hacer asincrónico
     def on_message(self, message):
         try:
-            commands = load_message(message)
+            command = json.loads(message)
         except ValueError:
-            self.write_message(error('Error decoding JSON'))
+            logger.exception('Error trying to decode client message')
+            self.write_message(error('Error decoding client message'))
             return
-        #with authenticate(self, message):
-        #    #self.write_message(message)
-        #    if commands['target'] == 'robot':
-        #        task.robot_action(message)
+
+        valid, error_msg = valid_client_message(command)
+        if not valid:
+            logger.warning('Invalid client message')
+            self.write_message(error_msg)
+            return
+
+        if not self.authenticated:
+            if command['entity'] != 'global' or \
+                    command['method'] not in ['auth_required', 'authenticate']:
+                logger.info('Unauthenticated user sending invalid method')
+                self.write_message(error('Authentication required'))
+                return
+
         self.write_message(message)
-        #self.finish()

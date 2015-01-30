@@ -4,6 +4,7 @@ from . import configuration
 #from controllers.legacy import Legacy
 #from controllers.robot import RobotController
 from .handlers.ws_handler import WSHandler
+from .handlers.login_handler import LoginHandler
 url_mapping = [
     (
         r'/js/?',
@@ -15,6 +16,7 @@ url_mapping = [
         tornado.web.StaticFileHandler,
         {'path': configuration.settings['static_path']}
     ),
+    (r'/login', LoginHandler),
     (r'/api', WSHandler),
     #(r'/api', WSController),
     #(r'/', WelcomeController)
