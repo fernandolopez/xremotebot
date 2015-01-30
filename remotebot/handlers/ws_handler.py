@@ -6,8 +6,7 @@ por el momento es un echo server
 import tornado.websocket
 import json
 
-# FIXME
-ERROR_MESSAGE = 'FIXME'
+from remotebot.lib.message import error
 
 def load_message(message):
     obj = json.loads(message)
@@ -28,15 +27,16 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def on_open(self):
         self.authenticated = False
 
+    # FIXME: Hacer asincrónico
     def on_message(self, message):
         try:
             commands = load_message(message)
         except ValueError:
-            self.write_message(ERROR_MESSAGE)
+            self.write_message(error('Error decoding JSON'))
             return
         #with authenticate(self, message):
         #    #self.write_message(message)
         #    if commands['target'] == 'robot':
         #        task.robot_action(message)
         self.write_message(message)
-        self.finish()
+        #self.finish()
