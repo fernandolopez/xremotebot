@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <link rel="icon" sizes="any" href="favicon.ico">
+        <!-- JQuery CDN -->
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <!-- Bootstrap CDN -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
@@ -82,18 +84,18 @@ function get_cookies(){
     var obj = {};
     document.cookie.split(';').forEach(function(each){
         kv = each.split('=');
-        obj[kv[0].trim()] = kv[1].trim();
+        if (kv.lenght > 0) obj[kv[0].trim()] = kv[1].trim();
     });
     return obj;
 }
 var cookies = get_cookies();
 if (cookies.username !== undefined) {
-    login.parent.parent.removeChild(login.parent);
-    logout.innerHTML = 'Salir (' + cookies.username + ')';
-            }
-            else{
-                logout.parent.parent.removeChild(logout.parent);
-            }
+    login.parentElement.parentElement.removeChild(login.parentElement);
+    logout.innerHTML = 'Salir (' + cookies.unsafe_name + ')';
+}
+else{
+    logout.parentElement.parentElement.removeChild(logout.parentElement);
+}
         </script>
         <div class="container-fluid">
             {% block body %}{% end %}

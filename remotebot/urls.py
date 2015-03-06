@@ -5,6 +5,7 @@ from . import configuration
 #from controllers.robot import RobotController
 from .handlers.ws_handler import WSHandler
 from .handlers.login_handler import LoginHandler
+from .handlers.logout_handler import LogoutHandler
 from .handlers.index_handler import IndexHandler
 
 url_mapping = [
@@ -19,6 +20,7 @@ url_mapping = [
         {'path': configuration.settings['static_path']}
     ),
     (r'/login', LoginHandler),
+    (r'/logout', LogoutHandler),
     (r'/api', WSHandler),
     #(r'/api', WSController),
     (r'/', IndexHandler)
