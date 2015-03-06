@@ -5,6 +5,8 @@ from . import configuration
 #from controllers.robot import RobotController
 from .handlers.ws_handler import WSHandler
 from .handlers.login_handler import LoginHandler
+from .handlers.index_handler import IndexHandler
+
 url_mapping = [
     (
         r'/js/?',
@@ -19,5 +21,5 @@ url_mapping = [
     (r'/login', LoginHandler),
     (r'/api', WSHandler),
     #(r'/api', WSController),
-    #(r'/', WelcomeController)
+    (r'/', IndexHandler)
 ]

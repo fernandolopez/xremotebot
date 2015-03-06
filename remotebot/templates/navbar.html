@@ -51,12 +51,11 @@
                         <li><a href="#">Separated link</a></li>
                     </ul>
                 </li>
-                {% if logged %}
-                    <li><a href="#">{{ user }} (Salir)</a></li>
+                {% if logged_in %}
+                <li><a id='logout' href="logout">Salir ({{username}})</a></li>
                 {% else %}
-                    <li><a href="#">Entrar</a></li>
+                <li><a id='login' href="login">Entrar</a></li>
                 {% end %}
-
             </ul>
         </div><!-- /.navbar-collapse -->
 </div><!-- /.container-fluid -->
