@@ -3,6 +3,13 @@ import base64
 import uuid
 
 
+from datetime import timedelta
+
+
+def days(d):
+    return timedelta(d)
+
+
 def _random_secret():
     '''Generates a random secret for cookie_secret'''
     return base64.b64encode(uuid.uuid4().bytes + uuid.uuid4().bytes)
@@ -19,3 +26,4 @@ settings = {
 log_level = 'DEBUG'
 log_file = 'remotebot.log'
 port = 8000
+api_key_expiration = days(700)

@@ -16,6 +16,7 @@ setup(
 
     install_requires = [
         'tornado',
+        'sqlalchemy',
     ],
 
     extras_require = {

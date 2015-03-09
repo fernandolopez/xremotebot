@@ -1,3 +1,12 @@
+import sqlalchemy
+
+
+def db():
+    engine = sqlalchemy.create_engine('sqlite://')
+    Session = sqlalchemy.orm.sessionmaker(bind=engine)
+    session = Session()
+    return (engine, session)
+
 
 def get_ws_url(tornado_test_case, uri):
     return tornado_test_case.get_url(uri).replace('http', 'ws', 1)
