@@ -1,0 +1,38 @@
+"use strict";
+
+function get_cookies(){
+    var obj = {};
+    var key, value, kv;
+    document.cookie.split(';').forEach(function(each){
+        kv = each.split('=');
+        if (kv.length == 2){
+            key = kv[0].trim();
+            value = decodeURIComponent(kv[1].trim()).replace(/\+/g, ' ');
+            obj[key] = value;
+        }
+    });
+    return obj;
+}
+
+
+$(document).ready(function(){
+    var cookies = get_cookies();
+    // Show errors
+    var error = $('#error_placeholder');
+    if (error.length > 0 && cookies['error'] !== undefined){
+        error.attr('class', error.attr('class').replace('hidden', ''));
+        error.text(cookies['error']);
+    }
+
+    // Display correct login/logout link
+    var login = $('#login');
+    var logout = $('#logout');
+
+    if (cookies.username !== undefined) {
+        login.remove();
+        logout.text('Salir (' + cookies.unsafe_name + ')');
+    }
+    else{
+        logout.remove();
+    }
+});

@@ -1,5 +1,4 @@
 import tornado.web
-import os.path
 from . import configuration
 #from controllers.legacy import Legacy
 #from controllers.robot import RobotController
@@ -9,19 +8,29 @@ from .handlers.logout_handler import LogoutHandler
 from .handlers.index_handler import IndexHandler
 
 url_mapping = [
-    (
-        r'/js/?',
-        tornado.web.RedirectHandler,
-        {'url': '/js/index.html'}
-    ),
-    (
-        r'/js/(.+)',
-        tornado.web.StaticFileHandler,
-        {'path': configuration.settings['static_path']}
-    ),
+    #(
+    #    r'/js/?',
+    #    tornado.web.RedirectHandler,
+    #    {'url': '/js/index.html'}
+    #),
+    #(
+    #    r'/js/(.+)',
+    #    tornado.web.StaticFileHandler,
+    #    {'path': configuration.settings['static_path']}
+    #),
     (r'/login', LoginHandler),
     (r'/logout', LogoutHandler),
     (r'/api', WSHandler),
     #(r'/api', WSController),
-    (r'/', IndexHandler)
+    (r'/', IndexHandler),
+    (
+        r'/js/(.+)',
+        tornado.web.StaticFileHandler,
+        {'path': configuration.settings['static_path'] + '/js'}
+    ),
+    (
+        r'/css/(.+)',
+        tornado.web.StaticFileHandler,
+        {'path': configuration.settings['static_path'] + '/css'}
+    ),
 ]
