@@ -6,6 +6,7 @@ import tornado.httpserver
 import tornado.websocket
 from remotebot import urls
 from remotebot import configuration
+from remotebot.lib import db
 
 # Logs
 log_formatter = logging.Formatter(
@@ -35,6 +36,8 @@ application = tornado.web.Application(
 
 
 def main(args):
+    # FIXME: Tomar la uri desde la configuración
+    db.init_engine_session('sqlite://')
     logger.info('About to listen on port %d', configuration.port)
     application.listen(configuration.port)
     logger.info('Listening on port %d', configuration.port)

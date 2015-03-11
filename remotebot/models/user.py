@@ -6,7 +6,7 @@ from hashlib import sha1
 import uuid
 from sqlalchemy.ext.hybrid import hybrid_property, Comparator
 from .. import configuration
-Base = declarative_base()
+from ..lib.db import Base
 
 
 class _PasswordHashedComparator(Comparator):
@@ -18,7 +18,7 @@ class _PasswordHashedComparator(Comparator):
 
 
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     password_hashed = Column(String)
