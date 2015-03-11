@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime, timedelta
-from remotebot.models.user import User
+from remotebot.models.user import User, UsernameAlreadyTaken
 from .test_helper import db
+from remotebot.lib import db as prod_db
 import remotebot.models.user
 
 
@@ -9,7 +10,7 @@ class UserTest(unittest.TestCase):
     def setUp(self):
         (engine, self.session) = db()
 
-        remotebot.models.user.Base.metadata.create_all(engine)
+        prod_db.Base.metadata.create_all(engine)
 
         self.user = User(
             username='test',
@@ -52,3 +53,11 @@ class UserTest(unittest.TestCase):
         self.user.api_key_expiration = datetime.now() - timedelta(5)
         self.user.renew_api_key()
         self.assertFalse(self.user.api_key_expired())
+
+    def test_create_user_with_taken_username(self):
+        with self.assertRaises(UsernameAlreadyTaken):
+            User.create('test', 'asd', self.session)
+
+    def test_create_user_with_free_username(self):
+        user = User.create('tset', 'asd', self.session)
+        self.assertIsInstance(user, User)

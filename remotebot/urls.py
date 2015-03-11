@@ -5,6 +5,7 @@ from . import configuration
 from .handlers.ws_handler import WSHandler
 from .handlers.login_handler import LoginHandler
 from .handlers.logout_handler import LogoutHandler
+from .handlers.signin_handler import SignInHandler
 from .handlers.index_handler import IndexHandler
 
 url_mapping = [
@@ -20,6 +21,7 @@ url_mapping = [
     #),
     (r'/login', LoginHandler),
     (r'/logout', LogoutHandler),
+    (r'/signin', SignInHandler),
     (r'/api', WSHandler),
     #(r'/api', WSController),
     (r'/', IndexHandler),

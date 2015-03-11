@@ -37,7 +37,7 @@ application = tornado.web.Application(
 
 def main(args):
     # FIXME: Tomar la uri desde la configuración
-    db.init_engine_session('sqlite://')
+    db.init_engine_session('sqlite:///test.db')
     logger.info('About to listen on port %d', configuration.port)
     application.listen(configuration.port)
     logger.info('Listening on port %d', configuration.port)

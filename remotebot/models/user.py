@@ -6,7 +6,7 @@ from hashlib import sha1
 import uuid
 from sqlalchemy.ext.hybrid import hybrid_property, Comparator
 from .. import configuration
-from ..lib.db import Base
+from ..lib import db
 
 
 class _PasswordHashedComparator(Comparator):
@@ -16,8 +16,11 @@ class _PasswordHashedComparator(Comparator):
     def __eq__(self, other):
         return self.password_hashed == sha1(other.encode()).hexdigest()
 
+class UsernameAlreadyTaken(Exception):
+    pass
 
-class User(Base):
+
+class User(db.Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
@@ -38,7 +41,8 @@ class User(Base):
         return _PasswordHashedComparator(cls.password_hashed)
 
     @classmethod
-    def login(cls, username, password, session):
+    def login(cls, username, password, session=None):
+        session = db.get_session(session)
         try:
             user = session.query(User).filter(User.username == username)\
                                       .filter(User.password == password).one()
@@ -47,11 +51,24 @@ class User(Base):
 
         return user
 
+    @classmethod
+    def create(cls, username, password, session=None):
+        session = db.get_session(session)
+        user = session.query(User).filter(User.username == username).all()
+        if len(user) > 0:
+            raise UsernameAlreadyTaken(username)
+        user = User(username=username, password=password)
+        user.renew_api_key()
+        session.add(user)
+        session.commit()
+        return user
+
+
     def api_key_expired(self):
         return self.api_key_expiration - datetime.now() < timedelta()
 
     def renew_api_key(self):
         self.api_key_expiration =\
             datetime.now() + configuration.api_key_expiration
-        self.api_key = uuid.uuid4()
+        self.api_key = str(uuid.uuid4())
         return self.api_key

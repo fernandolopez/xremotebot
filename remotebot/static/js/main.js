@@ -5,7 +5,7 @@ function get_cookies(){
     var key, value, kv;
     document.cookie.split(';').forEach(function(each){
         kv = each.split('=');
-        if (kv.length == 2){
+        if (kv.length >= 2){  // In safe cookies = is allowed in the value
             key = kv[0].trim();
             value = decodeURIComponent(kv[1].trim()).replace(/\+/g, ' ');
             obj[key] = value;
@@ -27,9 +27,11 @@ $(document).ready(function(){
     // Display correct login/logout link
     var login = $('#login');
     var logout = $('#logout');
+    //var signin = $('#signin');
 
     if (cookies.username !== undefined) {
         login.remove();
+        //signin.remove();
         logout.text('Salir (' + cookies.unsafe_name + ')');
     }
     else{
