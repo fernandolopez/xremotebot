@@ -1,7 +1,9 @@
 from ..models.user import User, UsernameAlreadyTaken
+from ..lib import login
+from .base_handler import BaseHandler
 import tornado.web
 
-class SignInHandler(tornado.web.RequestHandler):
+class SignInHandler(BaseHandler):
 
     def get(self):
         self.render('signin.html')
@@ -12,6 +14,7 @@ class SignInHandler(tornado.web.RequestHandler):
         try:
             user = User.create(username, password)
         except UsernameAlreadyTaken:
+            login.invalid_credentials(self)
             self.set_cookie(
                 'error',
                 tornado.escape.url_escape(
@@ -20,13 +23,5 @@ class SignInHandler(tornado.web.RequestHandler):
             )
             self.redirect('/signin')
         else:
-            self.redirect('/')
-
-        self.clear_all_cookies()
-        self.set_cookie(
-            'error',
-            tornado.escape.url_escape(
-                'Nombre de usuario o contraseña no válidos'
-            )
-        )
-        self.redirect('/login')
+            login.set_cookies_as_loggedin(self, username)
+            self.redirect(self.get_argument('next', '/'))

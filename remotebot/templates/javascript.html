@@ -1,0 +1,24 @@
+
+{% extends main.html %}
+
+{% block body %}
+<textarea id="codebox">
+//server = new Server('ws://163.10.20.218:8000/api', '{{current_user.api_key}}');
+var server = new Server('ws://localhost:8000/api', '{{current_user.api_key}}');
+var robot = server.fetch_robot();
+
+robot.forward(100, 1);
+robot.turnLeft(100, 1);
+</textarea>
+<input id="run-button" class="btn btn-success btn-lg pull-right" type="button" value="Ejecutar" />
+<!-- Create a simple CodeMirror instance -->
+<script>
+var codebox = $('#codebox');
+var editor = CodeMirror.fromTextArea(codebox[0], {
+    //lineNumbers: true,
+    mode: 'text/javascript',
+});
+var run_button = $('#run-button');
+run_button.click(editor, run_js);
+</script>
+{% end %}

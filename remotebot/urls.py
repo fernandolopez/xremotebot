@@ -7,6 +7,7 @@ from .handlers.login_handler import LoginHandler
 from .handlers.logout_handler import LogoutHandler
 from .handlers.signin_handler import SignInHandler
 from .handlers.index_handler import IndexHandler
+from .handlers.javascript_handler import JavascriptHandler
 
 url_mapping = [
     #(
@@ -35,4 +36,5 @@ url_mapping = [
         tornado.web.StaticFileHandler,
         {'path': configuration.settings['static_path'] + '/css'}
     ),
+    (r'/javascript', JavascriptHandler),
 ]

@@ -14,6 +14,10 @@ function get_cookies(){
     return obj;
 }
 
+function run_js(ev){
+    var code = ev.data.getValue();
+    eval(code);
+}
 
 $(document).ready(function(){
     var cookies = get_cookies();
@@ -27,11 +31,11 @@ $(document).ready(function(){
     // Display correct login/logout link
     var login = $('#login');
     var logout = $('#logout');
-    //var signin = $('#signin');
+    var signin = $('#signin');
 
     if (cookies.username !== undefined) {
         login.remove();
-        //signin.remove();
+        signin.remove();
         logout.text('Salir (' + cookies.unsafe_name + ')');
     }
     else{
