@@ -1,22 +1,27 @@
-import json
+import tornado.escape
 
-
-def values(*args):
-    return json.dumps({
+def value(value, msg_id=None):
+    obj = {
         'response': 'values',
-        'values': args,
-    })
+        'value': value,
+    }
+    if msg_id is not None:
+        obj['msg_id'] = msg_id
+    return tornado.escape.json_encode(obj)
 
 
-def error(message, stack_trace=''):
-    return json.dumps({
+def error(message, msg_id=None):
+    obj = {
         'response': 'error',
         'message': message,
-        'stack_trace': stack_trace,
-    })
-
+    }
+    if msg_id is not None:
+        obj['msg_id'] = msg_id
+    return tornado.escape.json_encode(obj)
 
 def valid_client_message(obj):
+    # FIXME MAYBE este tipo de errores no deberían afectar a los usuarios
+    # finales por lo que el msg_id para manejar promises no sería necesario
     if not isinstance(obj, dict):
         return (False, error('The messages should be JSON objects'))
 

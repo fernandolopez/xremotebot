@@ -1,13 +1,6 @@
 # -*- coding: utf8 -*-
 import logging.handlers
-# import tornado.ioloop
-import tornado.web
-import tornado.httpserver
-import tornado.websocket
-from remotebot import urls
 from remotebot import configuration
-from remotebot.lib import db
-
 # Logs
 log_formatter = logging.Formatter(
     fmt='%(asctime)s - [%(levelname)s] %(message)s [line: %(lineno)d'
@@ -26,6 +19,13 @@ log_handler.setLevel(configuration.log_level)
 logger = logging.getLogger('remotebot')
 logger.setLevel(configuration.log_level)
 logger.addHandler(log_handler)
+
+# import tornado.ioloop
+import tornado.web
+import tornado.httpserver
+import tornado.websocket
+from remotebot import urls
+from remotebot.lib import db
 
 # Tornado app
 

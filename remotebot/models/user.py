@@ -63,6 +63,17 @@ class User(db.Base):
         session.commit()
         return user
 
+    @classmethod
+    def with_api_key(cls, api_key, session=None):
+        session = db.get_session(session)
+        try:
+            user = session.query(User).filter(User.api_key == api_key).one()
+        except sqlalchemy.orm.exc.NoResultFound:
+            user = None
+        else:
+            if user.api_key_expired():
+                user = None
+        return user
 
     def api_key_expired(self):
         return self.api_key_expiration - datetime.now() < timedelta()
