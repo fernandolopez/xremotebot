@@ -1,10 +1,7 @@
 import os.path
 import base64
 import uuid
-
-
 from datetime import timedelta
-
 
 def days(d):
     return timedelta(d)
@@ -27,4 +24,5 @@ settings = {
 log_level = 'DEBUG'
 log_file = 'remotebot.log'
 port = 8000
+public_server = False
 api_key_expiration = days(700)
