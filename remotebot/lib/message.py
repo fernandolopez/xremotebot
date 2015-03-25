@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import tornado.escape
 
 def value(value, msg_id=None):
