@@ -2,3 +2,31 @@
     margin-right: 10%;
     margin-left: 5%;
 }
+
+.console {
+    display: block;
+    background-color: #000;
+    margin: 10px;
+    color: #eee;
+    overflow-y: scroll;
+    overflow-x: auto;
+    font-family: monospace;
+}
+
+#codebox, .CodeMirror {
+    margin: 10px;
+}
+
+.halo, .CodeMirror {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.halo:focus, .CodeMirror {
+    border-color: #66afe9;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+    outline: 0 none;
+}

@@ -9,6 +9,7 @@ import tornado.websocket
 import tornado.escape
 from remotebot.lib.message import value, error, valid_client_message
 from remotebot.models.user import User
+from remotebot.models.global_entity import Global
 
 logger = logging.getLogger('remotebot')
 
@@ -53,6 +54,18 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         self.write_message(message)
 
+    def get_current_user(self):
+        if not self.authenticated:
+            return None
+
+        return self.user
+
+    def set_current_user(self, user):
+        self.authenticated = True
+        self.user = user
+
+
+
     def _handle_api_message(self, json_msg):
         entity = json_msg['entity']
         method = json_msg['method']
@@ -71,7 +84,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     method, type(handler.klass), list(handler.allowed_methods))
             return error('"{}" method not supported by "{}" handler'.format(method, str(handler)))
 
-        return handler.klass._send(method, msg_id=msg_id, *args)
+        return handler.klass._send(method, self, msg_id=msg_id, *args)
 
     @classmethod
     def register_api_handler(cls, entity, entity_handler):
@@ -79,18 +92,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         # FIXME debug ineficiente
         logger.debug("%s entity handled by instance of %s with public methods %s", entity,
                 type(entity_handler), list(cls.handlers[entity].allowed_methods))
-
-class Entity(object):
-    def _send(self, method, *args, **kwargs):
-        return getattr(self, method)(*args, **kwargs)
-
-class Global(Entity):
-    def authentication_required(self, msg_id):
-        return value(True, msg_id=msg_id)
-
-    def authenticate(self, api_key, msg_id):
-        return value(User.with_api_key(api_key) is not None,
-                     msg_id=msg_id)
 
 
 WSHandler.register_api_handler('global', Global())

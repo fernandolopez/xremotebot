@@ -1,81 +1,114 @@
 'use strict';
 
-var next_avail_msg_id = 0;
-var pending_msgs = {};
-
-function send_ws_msg(ws, msg){
-    var msg_id = next_avail_msg_id++;
-    var promise;
-    promise = new Promise(function(resolve, reject){
-        pending_msgs[msg_id] = {resolve: resolve, reject: reject};
-    });
-    msg['msg_id'] = msg_id;
-    ws.send(JSON.stringify(msg));
-    return promise;
-}
 
 function Server(address, api_key){
     var that = this;
     this.address = address;
     this.api_key = api_key;
     this.authenticated = false;
+    this.onConnectFunction = function(){};
+    this.next_avail_msg_id = 0;
+    this.pending_msgs = {};
+    this.pending_count = 0;
+    this.delayed = [];
+
+    this.send_ws_msg = function(msg){
+        var msg_id = that.next_avail_msg_id++;
+        var promise;
+        promise = new Promise(function(resolve, reject){
+            that.pending_count++;
+            that.pending_msgs[msg_id] = {resolve: resolve, reject: reject};
+        });
+        msg['msg_id'] = msg_id;
+        if (that.pending_count <= 1){
+            that.ws.send(JSON.stringify(msg));
+        }
+        else{
+            that.delayed.push(JSON.stringify(msg));
+        }
+        return promise;
+    }
+
     this.authentication_required = function(){
-        var promise = send_ws_msg(that.ws,
+        var promise = that.send_ws_msg(
                 {entity: 'global', method: 'authentication_required'});
         return promise;
     };
     this.authenticate = function(api_key){
-        var promise = send_ws_msg(that.ws,
+        var promise = that.send_ws_msg(
                 {entity: 'global', method: 'authenticate', args: [api_key,]});
         return promise;
-    }
+    };
+    this.onConnect = function(f){
+        this.onConnectFunction = f;
+    };
     this.ws = new WebSocket(address);
     this.ws.onopen = function(e){
         that.authentication_required().then(function(required){
             if (required.value){
-                alert('autenticación requerida');
+                rblog('autenticación requerida');
                 return that.authenticate(that.api_key);
             }
             else{
-                alert('no se requiere autenticación');
+                that.onConnectFunction.apply();
+                rblog('no se requiere autenticación');
             }
         }).then(function(authenticated){
             if (authenticated.value){
-                alert('autenticado');
+                rblog('autenticado');
                 that.authenticated = true;
+                that.onConnectFunction.apply();
             }
             else{
-                alert('no autenticado');
+                rblog('no autenticado');
                 that.authenticated = false;
             }
         });
 
-        alert('conectado');
+        rblog('conectado');
     };
     this.ws.onmessage = function(msg){
         // FIXME
         msg = JSON.parse(msg.data);
-        console.log(msg);
+        rblog(msg);
+        that.pending_count--;
         if (msg['msg_id'] !== undefined){
-            var executor = pending_msgs[msg['msg_id']];
-            delete pending_msgs[msg['msg_id']];
+            var executor = that.pending_msgs[msg['msg_id']];
+            delete that.pending_msgs[msg['msg_id']];
             executor.resolve(msg);
         }
         else{
-            console.log(msg);
+            rblog(msg);
+        }
+        if (that.delayed.length > 0){
+            that.ws.send(that.delayed.pop());
         }
     };
     this.ws.onclose = function(e){
-        alert('desconectado');
+        rblog('desconectado');
+        that.delayed = [];
+        that.pending_msgs = {};
+        that.pending_count = 0;
     };
     this.ws.onerror = function(e){
-        alert('error ' + e.data);
+        rblog('error ' + e.data);
     };
 }
 
 
-//Server.prototype.fetch_robot = function
-Server.prototype.get_robots = function(){}
+Server.prototype.get_robots = function(){
+    var promise = this.send_ws_msg(
+        {entity: 'global', method: 'get_robots'}
+    );
+    return promise;
+}
+
+Server.prototype.fetch_robot = function(){
+    var promise = this.send_ws_msg(
+        {entity: 'global', method: 'fetch_robot'}
+    );
+    return promise;
+}
 
 //Server.prototype.reserve = function
 
@@ -115,3 +148,19 @@ Robot.prototype.turnRight = function(speed, time){
     this._send('turnRight', speed, time);
 };
 
+function println(text){
+    var console = $('#console');
+    if (typeof text !== 'object'){
+        text = String(text);
+    }
+    else{
+        text = JSON.stringify(text);
+    }
+    console.append(text, '&#10;');
+    console.scrollTop(console[0].scrollHeight);
+    console.focus();
+}
+
+// FIXME
+function rblog(text){ println(text); }
+// function rblog(){}

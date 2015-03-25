@@ -21,8 +21,13 @@ settings = {
     'login_url': '/login',
 }
 
+tls = False
+hostname = 'xremotebot.example'
 log_level = 'DEBUG'
 log_file = 'remotebot.log'
 port = 8000
 public_server = False
 api_key_expiration = days(700)
+robots = {
+    'n6': [13],
+}

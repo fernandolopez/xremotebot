@@ -23,5 +23,5 @@ class SignInHandler(BaseHandler):
             )
             self.redirect('/signin')
         else:
-            login.set_cookies_as_loggedin(self, username)
+            self.set_current_user(username)
             self.redirect(self.get_argument('next', '/'))

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from ..models.user import User
 from ..lib import db
 import tornado

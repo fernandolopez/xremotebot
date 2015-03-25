@@ -2,16 +2,25 @@
 {% extends main.html %}
 
 {% block body %}
-<textarea id="codebox">
-//server = new Server('ws://163.10.20.218:8000/api', '{{current_user.api_key}}');
-var server = new Server('ws://localhost:8000/api', '{{current_user.api_key}}');
-console.log(server.get_robots());
-//var robot = server.fetch_robot();
-
-robot.forward(100, 1);
-robot.turnLeft(100, 1);
+<textarea id="codebox" class="halo">
+var server = new Server('{{protocol}}://{{hostname}}:{{port}}/api', '{{current_user.api_key}}');
+server.onConnect(function(){
+&#9;server.get_robots().then(function(robots){
+&#9;&#9;println(robots);
+&#9;});
+&#10;
+&#9;server.fetch_robot().then(function(robot){
+&#9;&#9;println(robot);
+&#9;&#9;robot.forward(100, 1);
+&#9;&#9;robot.turnLeft(100, 1);
+&#9;});
+});
 </textarea>
 <input id="run-button" class="btn btn-success btn-lg pull-right" type="button" value="Ejecutar" />
+
+<textarea id="console" class="console halo" cols="80" rows="5" readonly="readonly">
+</textarea>
+
 <!-- Create a simple CodeMirror instance -->
 <script>
     var codebox = $('#codebox');

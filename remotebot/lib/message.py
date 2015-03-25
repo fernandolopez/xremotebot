@@ -3,7 +3,7 @@ import tornado.escape
 
 def value(value, msg_id=None):
     obj = {
-        'response': 'values',
+        'response': 'value',
         'value': value,
     }
     if msg_id is not None:

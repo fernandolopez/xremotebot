@@ -49,6 +49,7 @@ class User(db.Base):
         except sqlalchemy.orm.exc.NoResultFound:
             return None
 
+        session.commit()
         return user
 
     @classmethod
@@ -73,6 +74,7 @@ class User(db.Base):
         else:
             if user.api_key_expired():
                 user = None
+        session.commit()
         return user
 
     def api_key_expired(self):
@@ -83,3 +85,6 @@ class User(db.Base):
             datetime.now() + configuration.api_key_expiration
         self.api_key = str(uuid.uuid4())
         return self.api_key
+
+#    def reserve_any(self):
+
