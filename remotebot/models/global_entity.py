@@ -15,7 +15,7 @@ class Global(Entity):
     def authentication_required(self, wshandler, msg_id):
         return value(True, msg_id=msg_id)
 
-    def authenticate(self, wshandler, api_key, msg_id):
+    def authenticate(self, wshandler, msg_id, api_key):
         wshandler.authenticated = False
         user = User.with_api_key(api_key)
         if user is not None:

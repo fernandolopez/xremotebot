@@ -84,7 +84,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     method, type(handler.klass), list(handler.allowed_methods))
             return error('"{}" method not supported by "{}" handler'.format(method, str(handler)))
 
-        return handler.klass._send(method, self, msg_id=msg_id, *args)
+        try:
+            return handler.klass._send(method, self, msg_id, *args)
+        except TypeError as e:
+            return error(e.message)
 
     @classmethod
     def register_api_handler(cls, entity, entity_handler):
