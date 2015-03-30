@@ -54,9 +54,10 @@ class Global(Entity):
         raise NoFreeRobots('There are no free robots, '
                            'wait a moment and try again')
 
-    def reserve(self, wshandler, robot):
+    def reserve(self, wshandler, model, id_):
         reservation = Reservation.reserve(
-            robot_id=robot['id'],
-            robot_model=robot['model']
+            wshandler.current_user,
+            robot_id=id_,
+            robot_model=model,
         )
-        return reservation
+        return {'robot_model': reservation.robot_model, 'robot_id': reservation.robot_id}

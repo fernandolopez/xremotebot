@@ -21,7 +21,27 @@ class Reservation(Base):
     user        = sqlalchemy.orm.relation(User, backref='reservations')
 
     @classmethod
-    def reserved(cls, robot_model, robot_id, date_from, date_to, session):
+    def reserved(cls, user, robot_model, robot_id, date_from, date_to, session):
+        reservations = session.query(Reservation).filter(
+            and_(Reservation.robot_model == robot_model,
+                 Reservation.robot_id == robot_id,
+                 Reservation.user == user)
+        ).filter(
+            or_(
+                and_(date_from >= Reservation.date_from,
+                     date_from <  Reservation.date_to),
+
+                and_(date_to   <= Reservation.date_to,
+                     date_to   >  Reservation.date_from),
+
+                and_(date_from <= Reservation.date_from,
+                     date_to   >= Reservation.date_to)
+           )
+        )
+        return reservations.all()
+
+    @classmethod
+    def reserved_by_any_user(cls, robot_model, robot_id, date_from, date_to, session):
         reservations = session.query(Reservation).filter(
             and_(Reservation.robot_model == robot_model,
                  Reservation.robot_id == robot_id)
@@ -48,10 +68,12 @@ class Reservation(Base):
         if date_to is None:
             date_to = date_from + configuration.reservation_expiration
 
-        res = cls.reserved(robot_model, robot_id, date_from, date_to, session)
+        res = cls.reserved(user, robot_model, robot_id, date_from, date_to, session)
         if len(res) > 0:
-            # If the robot is reserved return None
-            session.rollback()
+            # If the robot is reserved by the same user, return it
+            return res[0]
+        if len(res) > 0:
+            # If the robot is reserved by other user return None
             return None
 
         reservation = cls(user=user,

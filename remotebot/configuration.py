@@ -33,6 +33,6 @@ public_server = False
 api_key_expiration = days(700)
 reservation_expiration = hours(1)
 robots = {
+    'n6': [10],
     'scribbler': ['00:1E:19:01:0B:81'],
-    'n6': [13],
 }

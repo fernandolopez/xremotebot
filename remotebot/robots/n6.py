@@ -32,5 +32,8 @@ class Robot(abcs.Robot):
     def ping(self):
         return self.robot.ping()
 
+    def getObstacle(self):
+        return self.robot.getObstacle()
+
     def stop(self):
         self.robot.stop()

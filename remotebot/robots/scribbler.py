@@ -10,7 +10,7 @@ class Robot(abcs.Robot):
     board = None
     mapping = None
     def __init__(self, id_):
-        if mapping is None:
+        if Robot.mapping is None:
             Robot.mapping = {}
             sub = subprocess.Popen(['rfcomm', '-a'], stdout=subprocess.PIPE)
             out, err = sub.communicate()
@@ -19,14 +19,15 @@ class Robot(abcs.Robot):
                 mac = mac.split()[0]
                 Robot.mapping[mac] = '/dev/' + device
 
-        self.robot = myro.Scribbler(mapping[id_])
+        self.robot = myro.Scribbler(Robot.mapping[id_])
+        self.id = id_
 
 
     def motors(self, left, right):
         left = float(left) * 100
         right = float(right) * 100
         self.robot.motors(left, right)
-        logger.info('motors(%d, %d) on robot %s %d',
+        logger.info('motors(%d, %d) on robot %s %s',
                      left, right, self.__class__, self.id)
 
 
@@ -34,10 +35,10 @@ class Robot(abcs.Robot):
         return self.robot.getLine()
 
     def getObstacle(self):
-        return self.robot.getObstacle()[1]
+        return self.robot.getObstacle(1)
 
     def ping(self):
-        return self.robot.ping()
+        return None
 
     def stop(self):
         self.robot.stop()

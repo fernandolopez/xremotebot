@@ -22,8 +22,11 @@ for model in robot_models:
     for id_ in robots[model]:
         id_ = str(id_)
         logger.debug('Accessing "%s.Robot(%s)"', model, id_)
-        robot_instances[(model, id_)] =\
-            getattr(robot_modules[model], 'Robot')(id_)
+        try:
+            robot_instances[(model, id_)] =\
+                getattr(robot_modules[model], 'Robot')(id_)
+        except Exception as e:
+            logger.error('Error creating instance of {}/{}. {}', model, id_, e.message)
 
 
 def _normalize_speed(s):
@@ -100,9 +103,6 @@ class Robot(Entity, RobotABC):
         logger.debug('turnRight called on the Robot entity instance')
         self.motors(wshandler, robot_obj, speed, -speed)
 
-    def getObstacle(self, wshandler, robot_obj, distance=10):
+    def getObstacle(self, wshandler, robot_obj):
         logger.debug('getObstacle called on the Robot entity instance')
-        distance = int(distance)
-        if not 0 < distance < 600:
-            distance = 10
-        return self.ping(wshandler, robot_obj) <= distance
+        return robot_instances[_dict_to_tuple(robot_obj)].getObstacle()

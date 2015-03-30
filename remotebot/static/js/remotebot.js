@@ -120,7 +120,12 @@ Server.prototype.fetch_robot = function(){
     return promise;
 }
 
-//Server.prototype.reserve = function
+Server.prototype.reserve = function(model, id){
+    var promise = this.send_ws_msg(
+        {entity: 'global', method: 'reserve', args: [model, id]}
+    );
+    return promise;
+};
 
 function Robot(server, robot_obj){
     var that = this;
