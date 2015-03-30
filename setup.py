@@ -14,9 +14,14 @@ setup(
     version = '1.0',
     packages = find_packages(),
 
+    dependency_links = [
+        'git+https://github.com/Robots-Linti/duinobot.git@pygame_opcional#egg=duinobot',
+    ],
     install_requires = [
         'tornado',
         'sqlalchemy',
+        'duinobot',
+        'pyserial',
     ],
 
     extras_require = {

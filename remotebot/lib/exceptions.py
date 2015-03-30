@@ -1,0 +1,3 @@
+
+class NoFreeRobots(Exception):
+    pass

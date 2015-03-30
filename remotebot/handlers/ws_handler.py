@@ -8,8 +8,10 @@ import logging
 import tornado.websocket
 import tornado.escape
 from remotebot.lib.message import value, error, valid_client_message
+from remotebot.lib.exceptions import NoFreeRobots
 from remotebot.models.user import User
 from remotebot.models.global_entity import Global
+from remotebot.models.robot import Robot
 
 logger = logging.getLogger('remotebot')
 
@@ -85,9 +87,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             return error('"{}" method not supported by "{}" handler'.format(method, str(handler)))
 
         try:
-            return handler.klass._send(method, self, msg_id, *args)
-        except TypeError as e:
-            return error(e.message)
+            msg = handler.klass._send(method, self, *args)
+            return value(msg, msg_id)
+        except (TypeError, NoFreeRobots) as e:
+            return error(e.message, msg_id)
 
     @classmethod
     def register_api_handler(cls, entity, entity_handler):
@@ -98,3 +101,4 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
 
 WSHandler.register_api_handler('global', Global())
+WSHandler.register_api_handler('robot', Robot())

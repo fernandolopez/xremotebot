@@ -1,6 +1,7 @@
 import unittest
 from datetime import datetime, timedelta
 from remotebot.models.reservation import Reservation
+from remotebot.models.user import User
 from .test_helper import db
 import remotebot.models.reservation
 
@@ -15,7 +16,16 @@ class ReservationTest(unittest.TestCase):
                                      robot_id='42',
                                      date_from=datetime(2000, 1, 1),
                                      date_to=datetime(2000, 1, 2)))
+        self.user = User(
+            username='test',
+            password='magic',
+            api_key='random',
+            api_key_expiration=datetime.now() + timedelta(5)
+         )
+
+        self.session.add(self.user)
         self.session.commit()
+
 
     def test_new_reservation_contains_older_one(self):
         reserved = Reservation.reserved('N6', '42', datetime(1999, 12, 31),
@@ -39,14 +49,16 @@ class ReservationTest(unittest.TestCase):
                                         datetime(2000, 1, 1) + timedelta(hours=1), self.session)
 
     def test_reserve_free_robot_returns_an_instance(self):
-        reservation = Reservation.reserve('N6', '42',
+        reservation = Reservation.reserve(self.user,
+                                          'N6', '42',
                                           datetime(2000, 2, 1),
                                           datetime(2000, 2, 2),
                                           self.session)
         self.assertIsInstance(reservation, Reservation)
 
     def test_reserve_occupied_robot_returns_none(self):
-        reservation = Reservation.reserve('N6', '42',
+        reservation = Reservation.reserve(self.user,
+                                          'N6', '42',
                                           datetime(2000, 1, 1),
                                           datetime(2000, 1, 1) + timedelta(hours=1),
                                           self.session)
@@ -57,7 +69,8 @@ class ReservationTest(unittest.TestCase):
         all_robots = { 'n6': ['1', '2'], 'scribbler': ['asdad'] }
         for model, ids in all_robots.items():
             for id_ in ids:
-                Reservation.reserve(model,
+                Reservation.reserve(self.user,
+                                    model,
                                     id_,
                                     datetime(2000, 1, 1),
                                     datetime(2000, 1, 1) + timedelta(hours=1),
@@ -67,16 +80,25 @@ class ReservationTest(unittest.TestCase):
 
     def test_one_free_robot(self):
         now = datetime(2000, 1, 1) + timedelta(minutes=5)
-        all_robots = { 'n6': ['1', '2'], 'scribbler': ['asdad'] }
+        all_robots = { 'n6': ['1', '2'], 'scribbler': ['asdad']}
         for model, ids in all_robots.items():
             for id_ in ids:
-                Reservation.reserve(model,
+                Reservation.reserve(self.user,
+                                    model,
                                     id_,
                                     datetime(2000, 1, 1),
                                     datetime(2000, 1, 1) + timedelta(hours=1),
                                     self.session)
         all_robots['n6'].append('4')
         self.assertEquals(1, len(Reservation.available(all_robots, now=now, session=self.session)))
+
+    def test_reserve_robot_for_user(self):
+        robot = Reservation.reserve_any(self.user, all_robots={'n6': [1]}, session=self.session)
+        self.assertIsInstance(robot, Reservation)
+
+    def test_reserve_robot_for_user_should_fail_if_no_robot_available(self):
+        robot = Reservation.reserve_any(self.user, all_robots={}, session=self.session)
+        self.assertIsNone(robot)
 
 
 

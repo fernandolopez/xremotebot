@@ -112,11 +112,11 @@ Server.prototype.fetch_robot = function(){
 
 //Server.prototype.reserve = function
 
-function Robot(id, server){
+function Robot(server, robot_obj){
     var that = this;
     this.server = server;
-    server.reserve(id);
-    this.id = id;
+    this.robot_id = robot_obj.robot_id
+    this.robot_model = robot_obj.robot_model
 }
 
 Robot.prototype._send = function(){ // message, *args
@@ -127,7 +127,7 @@ Robot.prototype._send = function(){ // message, *args
     }
     this.server.ws.send(JSON.stringify({
         entity: 'robot',
-        message: message,
+        method: message,
         args: args,
     }));
 };

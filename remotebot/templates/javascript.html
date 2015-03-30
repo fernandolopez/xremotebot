@@ -9,8 +9,9 @@ server.onConnect(function(){
 &#9;&#9;println(robots);
 &#9;});
 &#10;
-&#9;server.fetch_robot().then(function(robot){
-&#9;&#9;println(robot);
+&#9;server.fetch_robot().then(function(robot_obj){
+&#9;&#9;println(robot_obj);
+&#9;&#9;var robot = new Robot(server, robot_obj);
 &#9;&#9;robot.forward(100, 1);
 &#9;&#9;robot.turnLeft(100, 1);
 &#9;});

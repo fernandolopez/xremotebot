@@ -86,5 +86,3 @@ class User(db.Base):
         self.api_key = str(uuid.uuid4())
         return self.api_key
 
-#    def reserve_any(self):
-

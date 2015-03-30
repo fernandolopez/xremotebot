@@ -40,8 +40,13 @@ class Reservation(Base):
         return reservations.all()
 
     @classmethod
-    def reserve(cls, robot_model, robot_id, date_from, date_to, session):
-        session.begin()
+    def reserve(cls, user, robot_model, robot_id, date_from=None, date_to=None, session=None):
+        session = get_session(session)
+
+        if date_from is None:
+            date_from = datetime.now()
+        if date_to is None:
+            date_to = date_from + configuration.reservation_expiration
 
         res = cls.reserved(robot_model, robot_id, date_from, date_to, session)
         if len(res) > 0:
@@ -49,24 +54,8 @@ class Reservation(Base):
             session.rollback()
             return None
 
-        reservation = cls(robot_model=robot_model,
-                          robot_id=robot_id,
-                          date_from=date_from,
-                          date_to=date_to)
-        session.add(reservation)
-
-        session.commit()
-        return reservations.all()
-
-    @classmethod
-    def reserve(cls, robot_model, robot_id, date_from, date_to, session):
-        res = cls.reserved(robot_model, robot_id, date_from, date_to, session)
-        if len(res) > 0:
-            # If the robot is reserved return None
-            session.rollback()
-            return None
-
-        reservation = cls(robot_model=robot_model,
+        reservation = cls(user=user,
+                          robot_model=robot_model,
                           robot_id=robot_id,
                           date_from=date_from,
                           date_to=date_to)
@@ -87,12 +76,33 @@ class Reservation(Base):
         return res.all()
 
     @classmethod
-    def available(cls, all_robots, now=None, session=None):
+    def available(cls, all_robots=None, now=None, session=None):
         session = get_session(session)
         reserved = set()
+
+        if all_robots is None:
+            all_robots = configuration.robots
+
         for res in cls.all_reserved(now=now, session=session):
             reserved.add((res.robot_model, res.robot_id))
         all_ = {(model, str(id_)) for model, ids in all_robots.items() for id_ in ids}
 
         return all_ - reserved
 
+    @classmethod
+    def reserve_any(cls, user, all_robots=None, session=None):
+        session = get_session(session)
+        available = Reservation.available(all_robots=all_robots, session=session)
+        reservation = None
+        if available:
+            robot = available.pop()
+            reservation = Reservation.reserve(
+                user,
+                robot[0],
+                robot[1],
+                date_from=datetime.now(),
+                date_to=datetime.now() + configuration.reservation_expiration,
+                session=session,
+            )
+
+        return reservation

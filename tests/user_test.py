@@ -61,3 +61,4 @@ class UserTest(unittest.TestCase):
     def test_create_user_with_free_username(self):
         user = User.create('tset', 'asd', self.session)
         self.assertIsInstance(user, User)
+

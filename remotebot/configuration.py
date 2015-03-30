@@ -6,6 +6,9 @@ from datetime import timedelta
 def days(d):
     return timedelta(d)
 
+def hours(h):
+    return timedelta(hours=h)
+
 
 def _random_secret():
     '''Generates a random secret for cookie_secret'''
@@ -28,6 +31,7 @@ log_file = 'remotebot.log'
 port = 8000
 public_server = False
 api_key_expiration = days(700)
+reservation_expiration = hours(1)
 robots = {
     'n6': [13],
 }
