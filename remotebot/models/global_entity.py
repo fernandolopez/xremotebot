@@ -40,10 +40,16 @@ class Global(Entity):
         """
         robot = Reservation.reserve_any(wshandler.current_user)
         if robot is not None:
-            return {robot.robot_model: robot.robot_id}
+            return {
+                'robot_model': robot.robot_model,
+                'robot_id': robot.robot_id,
+            }
         elif len(wshandler.current_user.reservations) > 0:
             previous = wshandler.current_user.reservations[0]
-            return {previous.robot_model: previous.robot_id}
+            return {
+                'robot_model': previous.robot_model,
+                'robot_id': previous.robot_id,
+            }
 
         raise NoFreeRobots('There are no free robots, '
                            'wait a moment and try again')

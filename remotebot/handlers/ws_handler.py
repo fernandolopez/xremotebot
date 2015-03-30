@@ -11,7 +11,7 @@ from remotebot.lib.message import value, error, valid_client_message
 from remotebot.lib.exceptions import NoFreeRobots
 from remotebot.models.user import User
 from remotebot.models.global_entity import Global
-from remotebot.models.robot import Robot
+from remotebot.models.robot_entity import Robot
 
 logger = logging.getLogger('remotebot')
 
@@ -48,13 +48,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if not self.authenticated:
             if command['entity'] != 'global' or \
                     command['method'] not in ('authentication_required', 'authenticate'):
-                logger.info('Unauthenticated user sending invalid method')
+                logger.info('Unauthenticated user sending invalid method "%s.%s"',
+                            command['entity'],
+                            command['method']
+                )
                 self.write_message(error('Authentication required'))
                 return
 
-        message = self._handle_api_message(command)
-
-        self.write_message(message)
+        self._handle_api_message(command)
 
     def get_current_user(self):
         if not self.authenticated:
@@ -65,7 +66,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def set_current_user(self, user):
         self.authenticated = True
         self.user = user
-
 
 
     def _handle_api_message(self, json_msg):
@@ -80,17 +80,28 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         logger.info(handler)
         if handler is None:
             logger.info('"%s" entity not supported', entity)
-            return error('"{}" entity not supported'.format(entity))
+            self.write_message(error('"{}" entity not supported'.format(entity)))
         if method not in handler.allowed_methods:
             logger.info('"%s" method not supported by "%s" handler with allowed methods %s',
                     method, type(handler.klass), list(handler.allowed_methods))
-            return error('"{}" method not supported by "{}" handler'.format(method, str(handler)))
+            self.write_message(error('"{}" method not supported by "{}" handler'.format(method, str(handler))))
 
         try:
             msg = handler.klass._send(method, self, *args)
-            return value(msg, msg_id)
         except (TypeError, NoFreeRobots) as e:
-            return error(e.message, msg_id)
+            self.write_message(error(e.message, msg_id))
+        else:
+            is_delayed, time = handler.klass._delayed_stop(method, *args)
+            if is_delayed and time >= 0:
+                logger.debug('About to sleep %d seconds', time)
+
+                def delayed_f():
+                    handler.klass.stop(self, args[0])
+                    self.write_message(value(msg, msg_id))
+
+                tornado.ioloop.IOLoop.current().call_later(time, delayed_f)
+            else:
+                self.write_message(value(msg, msg_id))
 
     @classmethod
     def register_api_handler(cls, entity, entity_handler):

@@ -8,6 +8,7 @@ function Server(address, api_key){
     this.authenticated = false;
     this.onConnectFunction = function(){};
     this.next_avail_msg_id = 0;
+    this.last_response_msg_id = -1;
     this.pending_msgs = {};
     this.pending_count = 0;
     this.delayed = [];
@@ -15,16 +16,18 @@ function Server(address, api_key){
     this.send_ws_msg = function(msg){
         var msg_id = that.next_avail_msg_id++;
         var promise;
+        msg['msg_id'] = msg_id;
+        msg = JSON.stringify(msg);
+
+        that.delayed.push(msg);
+
         promise = new Promise(function(resolve, reject){
-            that.pending_count++;
             that.pending_msgs[msg_id] = {resolve: resolve, reject: reject};
         });
-        msg['msg_id'] = msg_id;
-        if (that.pending_count <= 1){
-            that.ws.send(JSON.stringify(msg));
-        }
-        else{
-            that.delayed.push(JSON.stringify(msg));
+
+        rblog(msg);
+        if (that.last_response_msg_id + 1 == msg_id){
+            that.ws.send(that.delayed.shift());
         }
         return promise;
     }
@@ -45,7 +48,7 @@ function Server(address, api_key){
     this.ws = new WebSocket(address);
     this.ws.onopen = function(e){
         that.authentication_required().then(function(required){
-            if (required.value){
+            if (required){
                 rblog('autenticación requerida');
                 return that.authenticate(that.api_key);
             }
@@ -54,7 +57,7 @@ function Server(address, api_key){
                 rblog('no se requiere autenticación');
             }
         }).then(function(authenticated){
-            if (authenticated.value){
+            if (authenticated){
                 rblog('autenticado');
                 that.authenticated = true;
                 that.onConnectFunction.apply();
@@ -63,6 +66,8 @@ function Server(address, api_key){
                 rblog('no autenticado');
                 that.authenticated = false;
             }
+        }).catch(function(msg){
+            alert('Conectándose con el servidor: ' + msg);
         });
 
         rblog('conectado');
@@ -71,17 +76,22 @@ function Server(address, api_key){
         // FIXME
         msg = JSON.parse(msg.data);
         rblog(msg);
-        that.pending_count--;
         if (msg['msg_id'] !== undefined){
             var executor = that.pending_msgs[msg['msg_id']];
             delete that.pending_msgs[msg['msg_id']];
-            executor.resolve(msg);
+            that.last_response_msg_id = msg['msg_id']
+            if (msg.response === 'value'){
+                executor.resolve(msg.value);
+            }
+            else{
+                executor.reject(msg.message);
+            }
         }
         else{
-            rblog(msg);
+            println(msg);
         }
         if (that.delayed.length > 0){
-            that.ws.send(that.delayed.pop());
+            that.ws.send(that.delayed.shift());
         }
     };
     this.ws.onclose = function(e){
@@ -91,7 +101,7 @@ function Server(address, api_key){
         that.pending_count = 0;
     };
     this.ws.onerror = function(e){
-        rblog('error ' + e.data);
+        println('error ' + e.data);
     };
 }
 
@@ -114,39 +124,59 @@ Server.prototype.fetch_robot = function(){
 
 function Robot(server, robot_obj){
     var that = this;
+    // FIXME
+    rblog('Creating local instance of robot');
+    if (robot_obj === undefined){
+        rblog('robot_obj is undefined');
+    }
+    rblog(robot_obj);
+
     this.server = server;
-    this.robot_id = robot_obj.robot_id
-    this.robot_model = robot_obj.robot_model
+    this.robot_id = robot_obj.robot_id;
+    this.robot_model = robot_obj.robot_model;
 }
 
 Robot.prototype._send = function(){ // message, *args
     var message = arguments[0];
-    var i, args = [];
+    var i, args = [({'robot_model': this.robot_model, 'robot_id': this.robot_id})];
+    var first, second;
+    var that = this;
     for (i = 1; i < arguments.length; i++){
         args.push(arguments[i]);
     }
-    this.server.ws.send(JSON.stringify({
+    return this.server.send_ws_msg({
         entity: 'robot',
         method: message,
         args: args,
-    }));
+    });
 };
 
+
+
 Robot.prototype.forward = function(speed, time){
-    this._send('forward', speed, time);
+    return this._send('forward', speed, time);
 };
 
 Robot.prototype.backward = function(speed, time){
-    this._send('backward', speed, time);
+    return this._send('backward', speed, time);
 };
 
 Robot.prototype.turnLeft = function(speed, time){
-    this._send('turnLeft', speed, time);
+    return this._send('turnLeft', speed, time);
 };
 
 Robot.prototype.turnRight = function(speed, time){
-    this._send('turnRight', speed, time);
+    return this._send('turnLeft', speed, time);
 };
+
+Robot.prototype.getObstacle = function(){
+    return this._send('getObstacle');
+};
+
+Robot.prototype.getLine = function(){
+    return this._send('getLine');
+};
+
 
 function println(text){
     var console = $('#console');
