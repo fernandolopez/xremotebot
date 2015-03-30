@@ -91,8 +91,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         except (TypeError, NoFreeRobots) as e:
             self.write_message(error(e.message, msg_id))
         else:
-            is_delayed, time = handler.klass._delayed_stop(method, *args)
-            if is_delayed and time >= 0:
+            is_delayed, time_arg = handler.klass._delayed_stop(method, *args)
+            if (is_delayed and time_arg < len(args) and
+                    args[time_arg] is not None and args[time_arg] >= 0):
+                time = args[time_arg]
                 logger.debug('About to sleep %d seconds', time)
 
                 def delayed_f():

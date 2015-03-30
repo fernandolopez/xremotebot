@@ -49,7 +49,7 @@ def _dict_to_tuple(d):
 class Robot(Entity, RobotABC):
 
     def _delayed_stop(self, method, *args):
-        time = None
+        time_arg = None
         delayed = method in (
             'motors',
             'forward',
@@ -58,11 +58,14 @@ class Robot(Entity, RobotABC):
             'turnRight',
         )
         if delayed:
-            time = args[-1]
+            if method == 'motors':
+                time_arg = 3
+            else:
+                time_arg = 2
 
-        return (delayed, time)
+        return (delayed, time_arg)
 
-    def motors(self, wshandler, robot_obj, left, right, time=-1):
+    def motors(self, wshandler, robot_obj, left, right, time=None):
         logger.debug('motors called on the Robot entity instance')
         robot_instances[_dict_to_tuple(robot_obj)].motors(
             _normalize_speed(left),
