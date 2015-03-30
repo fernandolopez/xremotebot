@@ -14,6 +14,16 @@ server.onConnect(function(){
 &#9;&#9;var robot = new Robot(server, robot_obj);
 &#9;&#9;robot.forward(100, 1);
 &#9;&#9;robot.turnLeft(100, 1);
+&#9;&#9;robot.turnRight(50, 2);
+&#9;&#9;robot.backward(50, 1);
+&#9;&#9;robot.ping().then(function(value){
+&#9;&#9;&#9;$('h1').append(value + 'cm, ');
+&#9;&#9;});
+&#9;&#9;robot.getObstacle().then(function(obstacle){
+&#9;&#9;&#9;robot.getLine().then(function(line){
+&#9;&#9;&#9;&#9;alert('Sensores de línea: ' + line + '\nSensor de obstáculo: ' + obstacle);
+&#9;&#9;&#9;});
+&#9;&#9;});
 &#9;});
 });
 </textarea>
@@ -21,6 +31,7 @@ server.onConnect(function(){
 
 <textarea id="console" class="console halo" cols="80" rows="5" readonly="readonly">
 </textarea>
+<script id="runner"></script>
 
 <!-- Create a simple CodeMirror instance -->
 <script>

@@ -16,7 +16,8 @@ function get_cookies(){
 
 function run_js(ev){
     var code = ev.data.getValue();
-    eval(code);
+    var runner = $('#runner').remove();
+    $('body').append('<script id="runner">' + code + '</script>');
 }
 
 $(document).ready(function(){

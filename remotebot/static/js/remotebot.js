@@ -177,6 +177,9 @@ Robot.prototype.getLine = function(){
     return this._send('getLine');
 };
 
+Robot.prototype.ping = function(){
+    return this._send('ping');
+};
 
 function println(text){
     var console = $('#console');
