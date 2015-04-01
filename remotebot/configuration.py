@@ -25,7 +25,8 @@ settings = {
 }
 
 tls = False
-hostname = 'xremotebot.example'
+hostname = '163.10.20.221' # 'xremotebot.example'
+video_ws = 'ws://{}:8084/'.format(hostname)
 log_level = 'DEBUG'
 log_file = 'remotebot.log'
 port = 8000

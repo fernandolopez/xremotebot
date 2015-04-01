@@ -88,7 +88,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         try:
             msg = handler.klass._send(method, self, *args)
-        except (TypeError, NoFreeRobots) as e:
+        except Exception as e:
+            logger.error('Error dispatching %s: %s', method, e.message)
             self.write_message(error(e.message, msg_id))
         else:
             is_delayed, time_arg = handler.klass._delayed_stop(method, *args)
@@ -98,8 +99,19 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 logger.debug('About to sleep %d seconds', time)
 
                 def delayed_f():
-                    handler.klass.stop(self, args[0])
-                    self.write_message(value(msg, msg_id))
+                    try:
+                        handler.klass.stop(self, args[0])
+                    except Exception as e:
+                        logger.error('Error dispatching %s: %s', method, e.message)
+                        self.write_message(
+                            error(
+                                '{}: {}'.format(
+                                    e.__class__.__name__,
+                                    e.message
+                            ),
+                            msg_id))
+                    else:
+                        self.write_message(value(msg, msg_id))
 
                 tornado.ioloop.IOLoop.current().call_later(time, delayed_f)
             else:

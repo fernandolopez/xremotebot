@@ -26,7 +26,7 @@ for model in robot_models:
             robot_instances[(model, id_)] =\
                 getattr(robot_modules[model], 'Robot')(id_)
         except Exception as e:
-            logger.error('Error creating instance of {}/{}. {}', model, id_, e.message)
+            logger.error('Error creating instance of %s/%s. %s', model, id_, e.message)
 
 
 def _normalize_speed(s):

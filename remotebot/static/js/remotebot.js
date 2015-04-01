@@ -196,7 +196,7 @@ function println(text){
     }
     console.append(text, '&#10;');
     console.scrollTop(console[0].scrollHeight);
-    console.focus();
+    // console.focus();
 }
 
 // FIXME

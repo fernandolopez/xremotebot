@@ -30,3 +30,10 @@
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
     outline: 0 none;
 }
+
+#videoCanvas {
+    /* Always stretch the canvas to 640x480, regardless of its
+    internal size. */
+    width: 320px;
+    height: 240px;
+}
