@@ -1,16 +1,25 @@
+h1 {
+    margin: 0 0.5em;
+}
+
 #run-button {
-    margin-right: 10%;
-    margin-left: 5%;
+    margin: 10px;
 }
 
 .console {
-    display: block;
     background-color: #000;
-    margin: 10px;
+    width: 100%;
     color: #eee;
     overflow-y: scroll;
     overflow-x: auto;
     font-family: monospace;
+}
+
+.console_container {
+    display: block;
+    width: 100%;
+    margin: 10px;
+    padding: 6px 12px;
 }
 
 #codebox, .CodeMirror {
@@ -34,6 +43,11 @@
 #videoCanvas {
     /* Always stretch the canvas to 640x480, regardless of its
     internal size. */
+    margin: 10px;
     width: 320px;
     height: 240px;
+}
+
+#tip{
+    width: 100%;
 }

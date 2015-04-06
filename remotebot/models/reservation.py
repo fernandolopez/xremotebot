@@ -1,14 +1,11 @@
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
 from sqlalchemy import or_, and_
-from sqlalchemy.ext.declarative import declarative_base
 import sqlalchemy.orm
-from datetime import datetime, timedelta
-from hashlib import sha1
-import uuid
-from sqlalchemy.ext.hybrid import hybrid_property, Comparator
+from datetime import datetime
 from .. import configuration
 from .user import User
 from ..lib.db import Base, get_session
+
 
 class Reservation(Base):
     __tablename__ = 'reservations'
@@ -21,7 +18,8 @@ class Reservation(Base):
     user        = sqlalchemy.orm.relation(User, backref='reservations')
 
     @classmethod
-    def reserved(cls, user, robot_model, robot_id, date_from, date_to, session):
+    def reserved(cls, user, robot_model, robot_id, date_from, date_to, session=None):
+        session = get_session(session)
         reservations = session.query(Reservation).filter(
             and_(Reservation.robot_model == robot_model,
                  Reservation.robot_id == robot_id,
@@ -41,7 +39,8 @@ class Reservation(Base):
         return reservations.all()
 
     @classmethod
-    def reserved_by_any_user(cls, robot_model, robot_id, date_from, date_to, session):
+    def reserved_by_any_user(cls, robot_model, robot_id, date_from, date_to, session=None):
+        session = get_session(session)
         reservations = session.query(Reservation).filter(
             and_(Reservation.robot_model == robot_model,
                  Reservation.robot_id == robot_id)
@@ -128,3 +127,7 @@ class Reservation(Base):
             )
 
         return reservation
+
+    def cancel(self, session=None):
+        session = get_session(session)
+        session.delete(self)

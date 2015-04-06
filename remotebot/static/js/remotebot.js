@@ -1,6 +1,5 @@
 'use strict';
 
-
 function Server(address, api_key){
     var that = this;
     this.address = address;
@@ -171,7 +170,7 @@ Robot.prototype.turnLeft = function(speed, time){
 };
 
 Robot.prototype.turnRight = function(speed, time){
-    return this._send('turnLeft', speed, time);
+    return this._send('turnRight', speed, time);
 };
 
 Robot.prototype.getObstacle = function(){
@@ -196,7 +195,6 @@ function println(text){
     }
     console.append(text, '&#10;');
     console.scrollTop(console[0].scrollHeight);
-    // console.focus();
 }
 
 // FIXME

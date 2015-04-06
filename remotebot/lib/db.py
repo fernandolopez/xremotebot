@@ -7,12 +7,14 @@ data = {
     'Session': None,
 }
 
+
 def init_engine_session(uri):
     engine = sqlalchemy.create_engine(uri)
     Session = sqlalchemy.orm.sessionmaker(bind=engine)
-    data['engine']  = engine
+    data['engine'] = engine
     data['Session'] = Session
     data['session'] = Session()
+
 
 def get_session(session):
     if session is None:
@@ -21,5 +23,3 @@ def get_session(session):
         return session
 
 Base = declarative_base()
-
-

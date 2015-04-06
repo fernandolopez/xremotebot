@@ -97,11 +97,11 @@ class Robot(Entity, RobotABC):
 
     def turnLeft(self, wshandler, robot_obj, speed=50, time=None):
         logger.debug('turnLeft called on the Robot entity instance')
-        self.motors(wshandler, robot_obj, -speed, speed)
+        self.motors(wshandler, robot_obj, speed, -speed)
 
     def turnRight(self, wshandler, robot_obj, speed=50, time=None):
         logger.debug('turnRight called on the Robot entity instance')
-        self.motors(wshandler, robot_obj, speed, -speed)
+        self.motors(wshandler, robot_obj, -speed, speed)
 
     def getObstacle(self, wshandler, robot_obj):
         logger.debug('getObstacle called on the Robot entity instance')

@@ -30,12 +30,13 @@
               });
           </textarea>
           <input id="run-button" class="btn btn-success btn-lg pull-right" type="button" value="Ejecutar" />
-
+          <div id="console_container">
           <textarea id="console" class="console halo" cols="80" rows="5" readonly="readonly">
           </textarea>
+          </div>
       </div>
       <div class="col-md-4">
-          <canvas id="videoCanvas" width="640" height="480">
+          <canvas class="center-block" id="videoCanvas" width="640" height="480">
               <p>
               Su navegador no soporta el elemento Canvas, pruebe con:
               <a href="http://www.google.com/chrome">Chrome</a>,
@@ -43,6 +44,13 @@
               <a href="http://www.apple.com/safari/">Safari</a> o Internet Explorer 10
               </p>
           </canvas>
+          <div class="checkbox">
+              <label>
+                  <input id="enable-rblog" type="checkbox" checked="checked"> Habilitar modo debug
+              </label>
+          </div>
+          <div id="tips" class="alert alert-info" role="alert">
+          </div>
       </div>
 </div>
 
@@ -51,12 +59,21 @@
 <!-- Create a simple CodeMirror instance -->
 <script>
     var codebox = $('#codebox');
+    var enable_rblog = $('#enable-rblog');
     var editor = CodeMirror.fromTextArea(codebox[0], {
         //lineNumbers: true,
         mode: 'text/javascript',
     });
-    var run_button = $('#run-button');
-    run_button.click(editor, run_js);
+    $('#run-button').click(editor, run_js);
+    enable_rblog.change(function (ev){
+        if (enable_rblog.prop('checked')){
+            window.rblog = window.println;
+        }
+        else{
+            window.rblog = function () {};
+        }
+    });
+
 </script>
 <script type="text/javascript" src="js/jsmpg.js"></script>
 <script type="text/javascript">

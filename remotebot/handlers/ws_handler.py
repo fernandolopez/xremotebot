@@ -8,17 +8,21 @@ import logging
 import tornado.websocket
 import tornado.escape
 from remotebot.lib.message import value, error, valid_client_message
-from remotebot.lib.exceptions import NoFreeRobots
-from remotebot.models.user import User
 from remotebot.models.global_entity import Global
 from remotebot.models.robot_entity import Robot
+from remotebot.models.reservation import Reservation
 
 logger = logging.getLogger('remotebot')
 
 import re
 import collections
-API_Handler = collections.namedtuple('API_Handler', ('klass', 'allowed_methods'))
+import datetime
+API_Handler = collections.namedtuple(
+    'API_Handler',
+    ('klass', 'allowed_methods')
+)
 public = re.compile(r'(^[a-zA-Z]\w*[a-zA-Z0-9]$|^[a-zA-Z]$)')
+
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     handlers = {}
@@ -30,7 +34,27 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.authenticated = False
 
-    # FIXME: Hacer asincrónico
+    def on_close(self):
+        user = self.current_user
+        handler = self.handlers['robot']
+        if user is not None:
+            for reservation in user.reservations:
+                model = reservation.robot_model
+                id_ = reservation.robot_id
+                try:
+                    handler.klass._send(
+                        'stop',
+                        self,
+                        {
+                            'robot_model': model,
+                            'robot_id': id_,
+                        }
+                    )
+                except Exception as e:
+                    logger.error('Stopping robot after'
+                                 'disconnection: %s', e.message)
+                reservation.cancel()
+
     def on_message(self, message):
         try:
             command = tornado.escape.json_decode(message)
@@ -45,17 +69,18 @@ class WSHandler(tornado.websocket.WebSocketHandler):
             self.write_message(error_msg)
             return
 
-        if not self.authenticated:
-            if command['entity'] != 'global' or \
-                    command['method'] not in ('authentication_required', 'authenticate'):
-                logger.info('Unauthenticated user sending invalid method "%s.%s"',
-                            command['entity'],
-                            command['method']
-                )
-                self.write_message(error('Authentication required'))
-                return
+        command['msg_id'] = command.get('msg_id', None)
+        command['args'] = command.get('args', [])
 
-        self._handle_api_message(command)
+        allowed, errmsg = self._user_authorized(
+            command['entity'],
+            command['method'],
+            *command['args']
+        )
+        if allowed:
+            self._handle_api_message(command)
+        else:
+            self.write_message(error(errmsg, command['msg_id']))
 
     def get_current_user(self):
         if not self.authenticated:
@@ -67,6 +92,40 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.authenticated = True
         self.user = user
 
+    def _user_authorized(self, entity, method, *args):
+        '''
+        Returns a tuple where the first value if true if the user can
+        perform this action, and false otherwise. The second value
+        is an error message if the user can't perform this action
+        '''
+        if entity == 'global' and \
+                method in ('authentication_required', 'authenticate'):
+            # You can always ask if auth is required and
+            # authenticate
+            return (True, None)
+        elif self.authenticated:
+            if entity == 'global':
+                # When authenticated you can do anithing with global
+                return (True, None)
+            elif entity == 'robot':
+                # If this is a robot check if it is reserved by this user
+                reserved = Reservation.reserved(
+                    self.current_user,
+                    args[0]['robot_model'],
+                    args[0]['robot_id'],
+                    datetime.datetime.now(),
+                    datetime.datetime.now()
+                )
+                if len(reserved) > 0:
+                    return (True, None)
+                else:
+                    return (False, 'There is no active reservation for ' +
+                            str(args[0]))
+
+        return (False,
+                'Authentication required for {}.{}({})'.format(entity,
+                                                               method,
+                                                               args))
 
     def _handle_api_message(self, json_msg):
         entity = json_msg['entity']
@@ -89,7 +148,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         try:
             msg = handler.klass._send(method, self, *args)
         except Exception as e:
-            logger.error('Error dispatching %s: %s', method, e.message)
+            logger.error('Error dispatching %s: %s %s',
+                         method,
+                         e.__class__.__name__,
+                         e.message)
             self.write_message(error(e.message, msg_id))
         else:
             is_delayed, time_arg = handler.klass._delayed_stop(method, *args)
@@ -102,16 +164,23 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                     try:
                         handler.klass.stop(self, args[0])
                     except Exception as e:
-                        logger.error('Error dispatching %s: %s', method, e.message)
-                        self.write_message(
-                            error(
-                                '{}: {}'.format(
-                                    e.__class__.__name__,
-                                    e.message
+                        logger.error('Error dispatching %s: %s',
+                                     method, e.message)
+                        response = error(
+                            '{}: {}'.format(
+                                e.__class__.__name__,
+                                e.message
                             ),
-                            msg_id))
+                            msg_id
+                        )
                     else:
-                        self.write_message(value(msg, msg_id))
+                        response = value(msg, msg_id)
+
+                    try:
+                        self.write_message(response)
+                    except tornado.websocket.WebSocketClosedError as e:
+                        logger.info('WebSocket closed while sending the'
+                                    'response to a delayed action')
 
                 tornado.ioloop.IOLoop.current().call_later(time, delayed_f)
             else:

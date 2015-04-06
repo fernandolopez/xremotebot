@@ -27,9 +27,12 @@ class Global(Entity):
     def get_robots(self, wshandler):
         # FIXME: cotejar con reservas actuales, mostrar libres y reservados
         # por el usuario actual
-        avail = {}
+        avail = []
         for model, id_ in Reservation.available(all_robots=robots):
-            avail[model] = id_
+            avail.append({
+                'robot_model': model,
+                'robot_id': id_,
+            })
         return avail
 
     def fetch_robot(self, wshandler):

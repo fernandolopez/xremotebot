@@ -14,49 +14,41 @@
         <script src="js/codemirror/lib/codemirror-compressed.js"></script>
         <script src="js/main.js"></script>
         <script src="js/remotebot.js"></script>
-        <title>Title</title>
+        <title>XRemoteBot</title>
     </head>
     <body>
         <div class="page-header">
-            <h1>&iexcl;Aprendé a programar controlando robots reales! <small>(en Python, Javascript o Ruby)</small></h1>
+            <h1>&iexcl;Aprendé a programar controlando robots reales!
+                <p><small>(en Python, Javascript o Ruby)</small></p>
+            </h1>
         </div>
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="/">Remotebot</a>
+                    <a class="navbar-brand" href="/">XRemoteBot</a>
                 </div>
 
                 <!-- Collect
                     the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
-                            <li><a href="#">&iquest;C&oacute;mo empiezo?</a></li>
                             <li><a href="javascript">Javascript</a></li>
-                            <li><a href="#">Python</a></li>
-                            <li><a href="#">Ruby</a></li>
+                            <li><a href="doc">Documentaci&oacute;n</a></li>
+                            <li><a href="doc/python">Python</a></li>
+                            <li><a href="doc/ruby">Ruby</a></li>
                         </ul>
-                        <form class="navbar-form navbar-left" role="search">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Search">
-                            </div>
-                            <button type="submit" class="btn btn-default">Submit</button>
-                        </form>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a href="#">Link</a></li>
-                            <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                                <ul class="dropdown-menu" role="menu">
-                                    <li><a href="#">Action</a></li>
-                                    <li><a href="#">Another action</a></li>
-                                    <li><a href="#">Something else here</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Separated link</a></li>
-                                </ul>
-                            </li>
                             <li><a id='login' href="login">Entrar</a></li>
                             <li><a id='signin' href="signin">Crear cuenta</a></li>
-                            <li><a id='logout' href="logout">Salir</a></li>
+                            <li class="dropdown" id="user_dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" id="user_dropdown_title">Men&uacute; de usuario <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="user">Datos del usuario</a></li>
+                                    <li class="divider"></li>
+                                    <li><a id='logout' href="logout">Salir</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </div><!-- /.navbar-collapse -->
             </div><!-- /.container-fluid -->

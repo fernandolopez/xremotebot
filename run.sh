@@ -1,8 +1,23 @@
 #!/bin/bash
 set -e
 . bin/activate
+
 if [ ! -f test.db ]; then
+    echo "Creando esquemas de la base de datos"
     python deploy_db.py
 fi
-su -c "python reconnect_myro.py"
+echo "Creando dispositivos rfcomm para los robots scribbler"
+echo "Se requiere la contraseña de root para continuar"
+#su -c "python reconnect_myro.py 2> /dev/null"
+
+echo "Iniciando streaming de video"
+node streaming/stream-server.js jiji > /dev/null & # depende de ws
+
+echo "Esperando a que el servicio de streaming arranque"
+sleep 1
+avconv -s 640x480 -f video4linux2 -i /dev/video0\
+    -f mpeg1video -b 800k -r 30\
+    http://localhost:8082/jiji/640/480/ -v quiet > /dev/null & # libav-utils o tools
+
+echo "Iniciando xremotebot"
 python app.py

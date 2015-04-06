@@ -3,8 +3,10 @@ import base64
 import uuid
 from datetime import timedelta
 
+
 def days(d):
     return timedelta(d)
+
 
 def hours(h):
     return timedelta(hours=h)
@@ -25,7 +27,7 @@ settings = {
 }
 
 tls = False
-hostname = '163.10.20.221' # 'xremotebot.example'
+hostname = '190.16.204.135'                   # 'xremotebot.example'
 video_ws = 'ws://{}:8084/'.format(hostname)
 log_level = 'DEBUG'
 log_file = 'remotebot.log'
@@ -34,6 +36,6 @@ public_server = False
 api_key_expiration = days(700)
 reservation_expiration = hours(1)
 robots = {
-    'n6': [10],
-    'scribbler': ['00:1E:19:01:0B:81'],
+    'n6': [13],
+    #'scribbler': ['00:1E:19:01:0B:81'],
 }
