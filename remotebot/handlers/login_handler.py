@@ -9,7 +9,9 @@ class LoginHandler(BaseHandler):
         self.clear_cookie('username')
         self.clear_cookie('unsafe_name')
         self.clear_cookie('post_next_redirect')
-        self.set_cookie('post_next_redirect', self.get_argument('next', '/'))
+        self.set_cookie('post_next_redirect',
+                        self.get_argument('next', '/'),
+                        expires_days=None)
         self.render('login.html')
 
     def post(self):

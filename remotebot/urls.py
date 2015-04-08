@@ -8,6 +8,7 @@ from .handlers.logout_handler import LogoutHandler
 from .handlers.signin_handler import SignInHandler
 from .handlers.index_handler import IndexHandler
 from .handlers.javascript_handler import JavascriptHandler
+from .handlers.doc_handler import DocHandler
 
 url_mapping = [
     #(
@@ -37,4 +38,5 @@ url_mapping = [
         {'path': configuration.settings['static_path'] + '/css'}
     ),
     (r'/javascript', JavascriptHandler),
+    (r'/doc', DocHandler),
 ]

@@ -26,6 +26,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def set_current_user(self, username):
         self.clear_all_cookies()
-        self.set_secure_cookie('username', username)
-        self.set_cookie('unsafe_name', username)
+        self.set_secure_cookie('username', username, expires_days=None)
+        self.set_cookie('unsafe_name', username, expires_days=None)
 
