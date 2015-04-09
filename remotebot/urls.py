@@ -38,5 +38,5 @@ url_mapping = [
         {'path': configuration.settings['static_path'] + '/css'}
     ),
     (r'/javascript', JavascriptHandler),
-    (r'/doc', DocHandler),
+    (r'/doc(/.*)?', DocHandler),
 ]

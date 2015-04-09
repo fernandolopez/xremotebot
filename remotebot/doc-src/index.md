@@ -1,9 +1,8 @@
-Hola
-====
+Progamá un robots desde tu casa
+------------------------------
 
-Chau
-----
+XRemoteBot es un servicio que permite programar robots de forma remota
+podés programarlos en [Python](/doc/python), [Ruby](/doc/ruby) o
+[Javascript](/doc/javascript).
 
-```python
-hi = 4
-```
+Para probar un ejemplo ahora mismo usá la [versión en Javascript](/javascript).

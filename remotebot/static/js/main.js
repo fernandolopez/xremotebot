@@ -7,20 +7,6 @@ var _tips = [
 
 ];
 
-function get_cookies(){
-    var obj = {};
-    var key, value, kv;
-    document.cookie.split(';').forEach(function(each){
-        kv = each.split('=');
-        if (kv.length >= 2){  // In safe cookies = is allowed in the value
-            key = kv[0].trim();
-            value = decodeURIComponent(kv[1].trim()).replace(/\+/g, ' ');
-            obj[key] = value;
-        }
-    });
-    return obj;
-}
-
 // Wrap setInterval and setTimeout to cleanup when running a new script
 var _timeouts = [];
 var _intervals = [];
@@ -49,33 +35,26 @@ function run_js(ev){
     _intervals.forEach(function(inter){
         clearInterval(inter);
     });
-
-    $('body').append('<script id="runner">' +
-                     code_wrapper +
-                     code +
-                     code_wrapper_end +
-                     '</script>');
 }
-
-$(document).ready(function(){
-    var cookies = get_cookies();
+$(function(){
     // Show errors
     var error = $('#error_placeholder');
-    if (error.length > 0 && cookies['error'] !== undefined){
+    if (error.length > 0 && $.cookie('error') !== undefined){
         error.attr('class', error.attr('class').replace('hidden', ''));
-        error.text(cookies['error']);
+        error.text($.cookie('error'));
     }
 
-    if (cookies['form_next_redirect'] !== undefined){
-        $('#form_next_redirect').text(cookies['form_next_redirect']);
+    if ($.cookie('form_next_redirect') !== undefined){
+        $('#form_next_redirect').text($.cookie('form_next_redirect'));
     }
 
     // Display correct login/logout link
-    if (cookies.username !== undefined && cookies.username !== null) {
+    if ($.cookie('username') !== undefined && $.cookie('unsafe_name') !== undefined) {
         $('#login').remove();
         $('#signin').remove();
         $('#user_dropdown_title').html(
-            escape(cookies.unsafe_name) + ' <span class="caret"></span>');
+                escape($.cookie('unsafe_name')) + ' <span class="caret"></span>'
+                );
     }
     else{
         $('#user_dropdown').remove();
@@ -88,5 +67,4 @@ $(document).ready(function(){
         $('#tips').text(_tips[_tip_index]);
         _tip_index = (_tip_index + 1) % _tips.length;
     }, 10000);
-
 });

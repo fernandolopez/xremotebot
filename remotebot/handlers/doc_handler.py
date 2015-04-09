@@ -6,11 +6,18 @@ from .base_handler import BaseHandler
 
 class DocHandler(BaseHandler):
     docbase = os.path.realpath(
-        os.path.join(os.path.basename(__file__),
+        os.path.join(os.path.dirname(__file__),
                      '..', 'doc-src')
     )
-    def get(self):
+    def get(self, slug):
         buffer = io.BytesIO()
-        markdown.markdownFromFile('remotebot/doc-src/index.md', buffer)
+        if slug in ('ruby', 'python', 'javascript'):
+            doc = slug
+        else:
+            doc = 'index'
+        markdown.markdownFromFile(
+            os.path.join(self.docbase, doc + '.md'),
+            buffer
+        )
         buffer.seek(0)
-        self.render('container.html', body=buffer.read())
+        self.render('container.html', body=buffer.read() + str(slug))
