@@ -35,8 +35,13 @@ function run_js(ev){
     _intervals.forEach(function(inter){
         clearInterval(inter);
     });
+    $('body').append('<script id="runner">' +
+                     code_wrapper +
+                     code +
+                     code_wrapper_end +
+                     '</script>');
 }
-$(function(){
+$(document).ready(function(){
     // Show errors
     var error = $('#error_placeholder');
     if (error.length > 0 && $.cookie('error') !== undefined){
