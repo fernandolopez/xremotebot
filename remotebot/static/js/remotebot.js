@@ -197,6 +197,4 @@ function println(text){
     console.scrollTop(console[0].scrollHeight);
 }
 
-// FIXME
 function rblog(text){ println(text); }
-// function rblog(){}

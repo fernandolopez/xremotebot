@@ -9,7 +9,7 @@ from .reservation import Reservation
 # from .robot import Robot
 
 from remotebot.configuration import robots
-from remotebot.lib.exceptions import NoFreeRobots
+from remotebot.lib.exceptions import NoFreeRobots, UnavailableRobot
 
 
 class Global(Entity):
@@ -63,4 +63,7 @@ class Global(Entity):
             robot_id=id_,
             robot_model=model,
         )
+        if reservation is None:
+            raise UnavailableRobot('Unavailable robot {}:{}'.format(model, id_))
+
         return {'robot_model': reservation.robot_model, 'robot_id': reservation.robot_id}

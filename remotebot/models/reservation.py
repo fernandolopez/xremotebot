@@ -71,7 +71,7 @@ class Reservation(Base):
         if len(res) > 0:
             # If the robot is reserved by the same user, return it
             return res[0]
-        if len(res) > 0:
+        if (robot_model, str(robot_id)) not in cls.available():
             # If the robot is reserved by other user return None
             return None
 
