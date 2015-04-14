@@ -2,31 +2,31 @@
 '''
 Global messages supported by XRemoteBot
 '''
+import random
+
 from .entity import Entity
 from .user import User
 from .reservation import Reservation
-# FIXME
-# from .robot import Robot
 
-from remotebot.configuration import robots
-from remotebot.lib.exceptions import NoFreeRobots, UnavailableRobot
+from xremotebot.configuration import robots, public_server
+from xremotebot.lib.exceptions import NoFreeRobots, UnavailableRobot
 
 
 class Global(Entity):
     def authentication_required(self, wshandler):
-        return True
+        return public_server
 
     def authenticate(self, wshandler, api_key):
-        wshandler.authenticated = False
-        user = User.with_api_key(api_key)
-        if user is not None:
-            wshandler.set_current_user(user)
-
-        return wshandler.authenticated
+        if public_server:
+            wshandler.authenticated = False
+            user = User.with_api_key(api_key)
+            if user is not None:
+                wshandler.set_current_user(user)
+            return wshandler.authenticated
+        else:
+            return True
 
     def get_robots(self, wshandler):
-        # FIXME: cotejar con reservas actuales, mostrar libres y reservados
-        # por el usuario actual
         avail = []
         for model, id_ in Reservation.available(all_robots=robots):
             avail.append({
@@ -41,6 +41,16 @@ class Global(Entity):
         robot if not or raises an exception if there are no available and
         no reserved robots for this user.
         """
+        nofreerobots = NoFreeRobots('There are no free robots, '
+                                    'wait a moment and try again')
+        if not public_server:
+            try:
+                model = random.choice(robots.keys())
+                id_ = random.choice(robots[model])
+                return {'robot_model': model, 'robot_id': id_}
+            except IndexError:
+                raise nofreerobots
+
         robot = Reservation.reserve_any(wshandler.current_user)
         if robot is not None:
             return {
@@ -54,10 +64,11 @@ class Global(Entity):
                 'robot_id': previous.robot_id,
             }
 
-        raise NoFreeRobots('There are no free robots, '
-                           'wait a moment and try again')
+        raise nofreerobots
 
     def reserve(self, wshandler, model, id_):
+        if not public_server:
+            return {'robot_model': model, 'robot_id': id_}
         reservation = Reservation.reserve(
             wshandler.current_user,
             robot_id=id_,

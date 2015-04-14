@@ -72,7 +72,6 @@ function Server(address, api_key){
         rblog('conectado');
     };
     this.ws.onmessage = function(msg){
-        // FIXME
         msg = JSON.parse(msg.data);
         rblog(msg);
         if (msg['msg_id'] !== undefined){
@@ -128,7 +127,6 @@ Server.prototype.reserve = function(model, id){
 
 function Robot(server, robot_obj){
     var that = this;
-    // FIXME
     rblog('Creating local instance of robot');
     if (robot_obj === undefined){
         rblog('robot_obj is undefined');
@@ -173,8 +171,8 @@ Robot.prototype.turnRight = function(speed, time){
     return this._send('turnRight', speed, time);
 };
 
-Robot.prototype.getObstacle = function(){
-    return this._send('getObstacle');
+Robot.prototype.getObstacle = function(distance){
+    return this._send('getObstacle', distance);
 };
 
 Robot.prototype.getLine = function(){
@@ -183,6 +181,10 @@ Robot.prototype.getLine = function(){
 
 Robot.prototype.ping = function(){
     return this._send('ping');
+};
+
+Robot.prototype.stop = function(){
+    return this._send('stop');
 };
 
 function println(text){

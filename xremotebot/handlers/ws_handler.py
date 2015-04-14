@@ -7,12 +7,13 @@ import logging
 
 import tornado.websocket
 import tornado.escape
-from remotebot.lib.message import value, error, valid_client_message
-from remotebot.models.global_entity import Global
-from remotebot.models.robot_entity import Robot
-from remotebot.models.reservation import Reservation
+from xremotebot.lib.message import value, error, valid_client_message
+from xremotebot.configuration import public_server
+from xremotebot.models.global_entity import Global
+from xremotebot.models.robot_entity import Robot
+from xremotebot.models.reservation import Reservation
 
-logger = logging.getLogger('remotebot')
+logger = logging.getLogger('xremotebot')
 
 import re
 import collections
@@ -98,6 +99,9 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         perform this action, and false otherwise. The second value
         is an error message if the user can't perform this action
         '''
+        if not public_server:
+            return (True, None)
+
         if entity == 'global' and \
                 method in ('authentication_required', 'authenticate'):
             # You can always ask if auth is required and
@@ -152,7 +156,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                          method,
                          e.__class__.__name__,
                          e.message)
-            self.write_message(error(e.message, msg_id))
+            self.write_message(error(
+                '{}: {}'.format(e.__class__.__name__, e.message), msg_id))
         else:
             is_delayed, time_arg = handler.klass._delayed_stop(method, *args)
             if (is_delayed and time_arg < len(args) and

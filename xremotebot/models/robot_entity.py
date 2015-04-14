@@ -4,12 +4,12 @@ Robot messages supported by XRemoteBot
 '''
 import logging
 
-logger = logging.getLogger('remotebot')
+logger = logging.getLogger('xremotebot')
 
 import importlib
 from .entity import Entity
-from remotebot.configuration import robots
-from remotebot.robots.abstract_classes import Robot as RobotABC
+from xremotebot.configuration import robots
+from xremotebot.robots.abstract_classes import Robot as RobotABC
 
 robot_models = robots.keys()
 robot_modules = {}
@@ -18,7 +18,7 @@ robot_instances = {}
 for model in robot_models:
     logger.debug('Importing "%s" plugin module', model)
     robot_modules[model] = importlib.import_module(
-        '.'.join(('remotebot.robots', model)))
+        '.'.join(('xremotebot.robots', model)))
     for id_ in robots[model]:
         id_ = str(id_)
         logger.debug('Accessing "%s.Robot(%s)"', model, id_)
@@ -103,6 +103,6 @@ class Robot(Entity, RobotABC):
         logger.debug('turnRight called on the Robot entity instance')
         self.motors(wshandler, robot_obj, -speed, speed)
 
-    def getObstacle(self, wshandler, robot_obj):
+    def getObstacle(self, wshandler, robot_obj, distance=10):
         logger.debug('getObstacle called on the Robot entity instance')
-        return robot_instances[_dict_to_tuple(robot_obj)].getObstacle()
+        return robot_instances[_dict_to_tuple(robot_obj)].getObstacle(distance)

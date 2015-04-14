@@ -1,8 +1,8 @@
 import duinobot
-import remotebot.robots.abstract_classes as abcs
+import xremotebot.robots.abstract_classes as abcs
 import logging
 
-logger = logging.getLogger('remotebot')
+logger = logging.getLogger('xremotebot')
 
 
 class Robot(abcs.Robot):
@@ -32,8 +32,8 @@ class Robot(abcs.Robot):
     def ping(self):
         return self.robot.ping()
 
-    def getObstacle(self):
-        return self.robot.getObstacle()
+    def getObstacle(self, distance):
+        return self.robot.getObstacle(distance)
 
     def stop(self):
         self.robot.stop()

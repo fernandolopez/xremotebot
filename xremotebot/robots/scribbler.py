@@ -1,9 +1,9 @@
 import myro
-import remotebot.robots.abstract_classes as abcs
+import xremotebot.robots.abstract_classes as abcs
 import logging
 import subprocess
 
-logger = logging.getLogger('remotebot')
+logger = logging.getLogger('xremotebot')
 
 
 class Robot(abcs.Robot):
@@ -24,8 +24,8 @@ class Robot(abcs.Robot):
 
 
     def motors(self, left, right):
-        left = float(left) * 100
-        right = float(right) * 100
+        left = float(left) / 100.0
+        right = float(right) / 100.0
         self.robot.motors(left, right)
         logger.info('motors(%d, %d) on robot %s %s',
                      left, right, self.__class__, self.id)
@@ -34,11 +34,18 @@ class Robot(abcs.Robot):
     def getLine(self):
         return self.robot.getLine()
 
-    def getObstacle(self):
-        return self.robot.getObstacle(1)
+    def getObstacle(self, distance=10):
+        return self.ping() < distance
 
     def ping(self):
-        return None
+        # Intenta aproximar la distancia en cm.
+        # 5900 = 0cm
+        # 500 = 95cm
+        distance = max(self.robot.getObstacle())
+        distance = (distance - 500) / 5400.0 * 95
+        if distance > 95:
+            return 601
+        return int(95 - distance)
 
     def stop(self):
         self.robot.stop()

@@ -1,9 +1,9 @@
 import unittest
 from datetime import datetime, timedelta
-from remotebot.models.user import User, UsernameAlreadyTaken
+from xremotebot.models.user import User, UsernameAlreadyTaken
 from .test_helper import db
-from remotebot.lib import db as prod_db
-import remotebot.models.user
+from xremotebot.lib import db as prod_db
+import xremotebot.models.user
 
 
 class UserTest(unittest.TestCase):

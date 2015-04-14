@@ -1,4 +1,4 @@
-from remotebot import configuration
+from xremotebot import configuration
 import os
 import time
 

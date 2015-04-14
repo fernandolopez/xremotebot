@@ -5,7 +5,7 @@ from tornado.testing import AsyncHTTPTestCase, gen_test
 import tornado.web
 from tornado.websocket import websocket_connect
 
-from remotebot.handlers.ws_handler import WSHandler
+from xremotebot.handlers.ws_handler import WSHandler
 
 from .test_helper import get_ws_url
 

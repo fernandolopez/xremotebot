@@ -8,7 +8,7 @@ if [ ! -f test.db ]; then
 fi
 echo "Creando dispositivos rfcomm para los robots scribbler"
 echo "Se requiere la contraseña de root para continuar"
-#su -c "python reconnect_myro.py 2> /dev/null"
+su -c "python reconnect_myro.py" # 2> /dev/null"
 
 echo "Iniciando streaming de video"
 node streaming/stream-server.js jiji > /dev/null & # depende de ws

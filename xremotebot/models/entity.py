@@ -3,7 +3,7 @@ Base class for the entities supported by XRemoteBot
 '''
 import logging
 
-logger = logging.getLogger('remotebot')
+logger = logging.getLogger('xremotebot')
 
 class Entity(object):
     def _send(self, method, wshandler, *args, **kwargs):

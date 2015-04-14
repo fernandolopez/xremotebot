@@ -4,7 +4,7 @@ from ..lib import db
 from ..models.user import User
 
 import logging
-logger = logging.getLogger('remotebot')
+logger = logging.getLogger('xremotebot')
 
 
 class BaseHandler(tornado.web.RequestHandler):

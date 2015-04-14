@@ -1,16 +1,16 @@
 import unittest
 from datetime import datetime, timedelta
-from remotebot.models.reservation import Reservation
-from remotebot.models.user import User
+from xremotebot.models.reservation import Reservation
+from xremotebot.models.user import User
 from .test_helper import db
-import remotebot.models.reservation
+import xremotebot.models.reservation
 
 
 class ReservationTest(unittest.TestCase):
     def setUp(self):
         (engine, self.session) = db()
 
-        remotebot.models.reservation.Base.metadata.create_all(engine)
+        xremotebot.models.reservation.Base.metadata.create_all(engine)
 
         self.session.add(Reservation(robot_model='N6',
                                      robot_id='42',

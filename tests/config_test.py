@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import unittest
-from remotebot.lib import config
+from xremotebot.lib import config
 import io
 
 class ConfigTest(unittest.TestCase):

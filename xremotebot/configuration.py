@@ -25,17 +25,16 @@ settings = {
     'template_path': os.path.join(os.path.dirname(__file__), 'templates'),
     'login_url': '/login',
 }
-
 tls = False
-hostname = '190.16.204.135'                   # 'xremotebot.example'
+hostname = 'localhost'                   # 'xremotebot.example'
 video_ws = 'ws://{}:8084/'.format(hostname)
 log_level = 'DEBUG'
-log_file = 'remotebot.log'
+log_file = 'xremotebot.log'
 port = 8000
-public_server = False
+public_server = True
 api_key_expiration = days(700)
 reservation_expiration = hours(1)
 robots = {
-    'n6': [13],
-    #'scribbler': ['00:1E:19:01:0B:81'],
+    'n6': [10, 7],
+    'scribbler': ['00:1E:19:01:0B:81'],
 }

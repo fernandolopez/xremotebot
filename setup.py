@@ -10,7 +10,7 @@ test_deps = [
 ]
 
 setup(
-    name = 'remotebot',
+    name = 'xremotebot',
     version = '1.0',
     packages = find_packages(),
 
@@ -34,7 +34,7 @@ setup(
     author = 'Fernando López',
     author_email = 'fernando.e.lopez@gmail.com',
     description = 'Servidor para controlar robots educativos de forma remota',
-    license = 'GPLv2',
+    license = 'MIT',
     keywords = 'robots websockets education programming',
-    url = 'http://github.com/fernandolopez/remotebot'
+    url = 'http://github.com/fernandolopez/xremotebot'
 )

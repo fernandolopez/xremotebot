@@ -1,9 +1,9 @@
-from remotebot import configuration
-from remotebot.lib import db
+from xremotebot import configuration
+from xremotebot.lib import db
 
 # FIXME: toma la uri desde configuration
-from remotebot import configuration
-from remotebot.lib import db
+from xremotebot import configuration
+from xremotebot.lib import db
 import os.path
 import importlib
 
