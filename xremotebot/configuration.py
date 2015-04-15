@@ -26,6 +26,7 @@ settings = {
     'login_url': '/login',
 }
 tls = False
+disable_streaming = False
 hostname = 'localhost'                   # 'xremotebot.example'
 video_ws = 'ws://{}:8084/'.format(hostname)
 log_level = 'DEBUG'

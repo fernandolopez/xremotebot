@@ -1,20 +1,33 @@
-from xremotebot import configuration
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+import xremotebot.configuration as conf
+from glob import glob
+from util import run, runbg
 import os
 import time
 
-# Free rfcomms
-for i in range(20):
-    if os.path.exists('/dev/rfcomm{}'.format(i)):
-        os.system('fuser /dev/rfcomm{} | cut -d: -f2 | xargs kill'.format(i))
-        os.system('rfcomm release rfcomm{}'.format(i))
-        time.sleep(1)
-        os.system('rfcomm release rfcomm{}'.format(i))
+class Scribbler:
+    @staticmethod
+    def release_rfcomm():
+        for device in glob('/dev/rfcomm*'):
+            try:
+                status, out, err = run('lsof', '-t', device)
+            except OSError:
+                print('Instale lsof para una mejor gestión de dispositivos')
+            else:
+                for pid in out.splitlines():
+                    os.kill(int(pid), 9)
+            run('rfcomm', 'release', device, stdout=None, stderr=None)
 
-scribblers = 0
+    @staticmethod
+    def bind_rfcomm(macs):
+        for n, mac in enumerate(macs):
+            run('rfcomm', 'bind', 'rfcomm{}'.format(n), mac,
+                stdout=None, stderr=None)
 
-for model, ids in configuration.robots.items():
-    if model == 'scribbler':
-        for id_ in ids:
-            print('rfcomm bind rfcomm{} {} 1'.format(scribblers, id_))
-            os.system('rfcomm bind rfcomm{} {} 1'.format(scribblers, id_))
-            scribblers += 1
+def main():
+    Scribbler.release_rfcomm()
+    Scribbler.bind_rfcomm(conf.robots.get('scribbler', []))
+
+if __name__ == '__main__':
+    main()

@@ -36,6 +36,10 @@
           </div>
       </div>
       <div class="col-md-4">
+{% if disable_streaming %}
+          <img class="center-block" id="videoCanvas" width="640" height="480"
+          src="/img/camera_disabled.svg">
+{% else %}
           <canvas class="center-block" id="videoCanvas" width="640" height="480">
               <p>
               Su navegador no soporta el elemento Canvas, pruebe con:
@@ -44,6 +48,7 @@
               <a href="http://www.apple.com/safari/">Safari</a> o Internet Explorer 10
               </p>
           </canvas>
+{% end %}
           <div class="checkbox">
               <label>
                   <input id="enable-rblog" type="checkbox" checked="checked"> Habilitar modo debug
@@ -75,16 +80,18 @@
     });
 
 </script>
-<script type="text/javascript" src="js/jsmpg.js"></script>
-<script type="text/javascript">
-// Show loading notice
-var canvas = document.getElementById('videoCanvas');
-var ctx = canvas.getContext('2d');
-ctx.fillStyle = '#444';
-ctx.fillText('Cargando...', canvas.width/2-30, canvas.height/3);
+{% if not disable_streaming %}
+    <script type="text/javascript" src="js/jsmpg.js"></script>
+    <script type="text/javascript">
+    // Show loading notice
+    var canvas = document.getElementById('videoCanvas');
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#444';
+    ctx.fillText('Cargando...', canvas.width/2-30, canvas.height/3);
 
-// Setup the WebSocket connection and start the player
-var client = new WebSocket('{{video_ws}}');
-var player = new jsmpeg(client, {canvas:canvas});
-</script>
+    // Setup the WebSocket connection and start the player
+    var client = new WebSocket('{{video_ws}}');
+    var player = new jsmpeg(client, {canvas:canvas});
+    </script>
+{% end %}
 {% end %}

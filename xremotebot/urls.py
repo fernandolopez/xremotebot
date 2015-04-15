@@ -37,6 +37,11 @@ url_mapping = [
         tornado.web.StaticFileHandler,
         {'path': configuration.settings['static_path'] + '/css'}
     ),
+    (
+        r'/img/(.+)',
+        tornado.web.StaticFileHandler,
+        {'path': configuration.settings['static_path'] + '/img'}
+    ),
     (r'/javascript', JavascriptHandler),
     (r'/doc(/.*)?', DocHandler),
 ]

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2187"
+   viewBox="0 0 50 50"
+   version="1.0"
+   inkscape:version="0.48.5 r10040"
+   width="100%"
+   height="100%"
+   sodipodi:docname="camera_disabled.svg">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1366"
+     inkscape:window-height="718"
+     id="namedview8"
+     showgrid="false"
+     inkscape:zoom="4.72"
+     inkscape:cx="-11.54661"
+     inkscape:cy="25"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2187" />
+  <path
+     style="fill:none;stroke:#ff0000;stroke-width:2.25000000000000000;stroke-opacity:1"
+     inkscape:connector-curvature="0"
+     d="m 46.038,24.46 a 21.3765,19.746462 0 1 1 -42.753,0 21.3765,19.746462 0 1 1 42.753,0 z"
+     id="path3201" />
+  <path
+     inkscape:connector-curvature="0"
+     d="m 15.974,12.273 c -3.0333,0 -5.5,2.2388 -5.5,4.9688 0,2.7299 2.4667,4.9375 5.5,4.9375 3.0333,0 5.5,-2.2076 5.5,-4.9375 0,-2.7299 -2.4667,-4.9688 -5.5,-4.9688 z m 12.812,0 c -3.0333,0 -5.5,2.2388 -5.5,4.9688 0,2.7299 2.4667,4.9375 5.5,4.9375 3.0333,0 5.5,-2.2076 5.5,-4.9375 0,-2.7299 -2.4667,-4.9688 -5.5,-4.9688 z m -14.5,10.438 c -0.49304,0 -0.875,0.41321 -0.875,0.90625 v 12.125 c 0,0.49304 0.38196,0.90625 0.875,0.90625 h 17.281 c 0.49304,0 0.875,-0.41321 0.875,-0.90625 v -12.125 c 0,-0.49304 -0.38196,-0.90625 -0.875,-0.90625 H 14.286 z m 19.406,4.0312 c -0.49304,0 -0.875,0.41321 -0.875,0.90625 v 4.625 c 0,0.49304 0.38196,0.875 0.875,0.875 h 4.2812 c 0.49304,0 0.875,-0.38196 0.875,-0.875 v -4.625 c 0,-0.49304 -0.38196,-0.90625 -0.875,-0.90625 H 33.692 z"
+     id="rect3223" />
+  <metadata
+     id="metadata6">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Video icon</dc:title>
+        <dc:date>2013-10-06T14:39:46</dc:date>
+        <dc:description>video icon/pictogram</dc:description>
+        <dc:source>https://openclipart.org/detail/184619/video-icon-by-ousia-184619</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>ousia</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>icon</rdf:li>
+            <rdf:li>video</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:none;stroke:#ff0000;stroke-width:2.4999999;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+     d="m 39.40678,10.805085 -27.542373,28.38983 0,0"
+     id="path3757"
+     inkscape:connector-curvature="0" />
+</svg>
