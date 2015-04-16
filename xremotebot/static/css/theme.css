@@ -40,6 +40,10 @@ h1 {
     outline: 0 none;
 }
 
+.bottom_label {
+    text-align: center;
+}
+
 #videoCanvas {
     /* Always stretch the canvas to 640x480, regardless of its
     internal size. */

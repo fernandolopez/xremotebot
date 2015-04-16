@@ -22,8 +22,11 @@ class Scribbler:
     @staticmethod
     def bind_rfcomm(macs):
         for n, mac in enumerate(macs):
-            run('rfcomm', 'bind', 'rfcomm{}'.format(n), mac,
+            status, _, _ = run('rfcomm', 'bind', 'rfcomm{}'.format(n), mac,
                 stdout=None, stderr=None)
+            if status != 0:
+                raise OSError('Error asociando {} '
+                              'a un dispositivo rfcomm'.format(mac))
 
 def main():
     Scribbler.release_rfcomm()

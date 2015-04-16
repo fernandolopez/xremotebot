@@ -2,5 +2,63 @@
 
 {% block body %}
 <!-- FIXME: Contenido -->
-Ejemplos y dem&aacute;
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <p>XRemoteBot permite programar robots de forma remota en Javascript, Python
+        y Ruby.</p>
+        <p>Pod&eacute;s empezar a probar los robots sin instalar nada program&aacute;ndolos en
+        Javascript desde esta p&aacute;gina. Si te gusta la idea pod&eacute;s instalar el
+        cliente Python o el cliente Ruby para programar los robots usando estos
+        lenguajes.</p>
+        <p>Para empezar a usar los robots cre&aacute; un usuario.</p>
+        <p>Esta implementación soporta robots Multiplo N6 de RobotGroup y Scribbler de
+        Parallax. En este momento los siguientes robots se encuentran conectados:</p>
+        <ul>
+        {% for model, ids in robots.items() %}
+            <li>{{model}}:
+                <ul>
+                {% for id_, date in ids %}
+                    {% if date is None %}
+                        <li>{{id_}}</li>
+                    {% else %}
+                    <li>{{id_}} (reservado hasta el {{date.day}}/{{date.month}}/{{date.year}} a las
+                        {{date.hour}}:{{date.minute}}hs)</li>
+                    {% end %}
+                {% end %}
+                </ul>
+            </li>
+        {% end %}
+        </ul>
+    </div>
+    <div class="col-xs-6 col-md-4">
+        <div class="halo">
+            <div id="fig-n6">
+                <img src="/img/n6.jpg" id="fig-img" class="img-responsive" alt="Multiplo N6">
+                <p class="bottom_label">Multiplo N6</p>
+            </div>
+            <div style="display: none;" id="fig-scribbler">
+                <img src="/img/scribbler.jpg" id="fig-img" class="img-responsive" alt="Scribbler">
+                <p class="bottom_label">Scribbler</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var fig_sequence = 0;
+setInterval(function(){
+    if (fig_sequence === 0){
+        $('#fig-n6').fadeOut(400, function(){
+            $('#fig-scribbler').fadeIn();
+        });
+        fig_sequence = 1;
+    }
+    else{
+        $('#fig-scribbler').fadeOut(400, function(){
+            $('#fig-n6').fadeIn();
+        });
+        fig_sequence = 0;
+    }
+}, 10000);
+</script>
 {% end %}

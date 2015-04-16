@@ -11,6 +11,9 @@ class DocHandler(BaseHandler):
     )
     def get(self, slug):
         buffer = io.BytesIO()
+        if slug is None:
+            slug = ''
+        slug = slug.replace('/', '')
         if slug in ('ruby', 'python', 'javascript'):
             doc = slug
         else:
