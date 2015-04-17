@@ -127,5 +127,110 @@ Los robots soportan 4 movimientos:
 * `Robot.turnLeft()`: Girar a la izquierda.
 * `Robot.turnRight()`: Girar a la derecha.
 
+Cada uno de estos métodos puede recibir entre cero y dos
+argumentos, y retorna un objeto
+[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
+
+Si no reciben argumentos, el movimiento
+se realiza a una velocidad predeterminada por un tiempo
+indefinido (hasta que invoques `Robot.stop()`).
+
+Si se le envían parámetros, el primero indica la velocidad
+(entre -100 y 100, siendo 0 equivalente a invocar
+`Robot.stop()`). Y el segundo indica el tiempo que debe
+durar el movimiento en segundos, al finalizar ese tiempo
+el robot se detendrá automáticamente.
+
+Por ejemplo:
+
+```javascript
+robot.forward(); // El robot se mueve indefinidamente
+                 // a una velocidad predeterminada
+```
+
+```javascript
+robot.forward(50); // El robot se mueve indefinidamente
+                   // a velocidad 50
+```
+
+```javascript
+robot.forward(50, 1); // El robot se mueve a velocidad 50
+                      // durante un segundo
+```
+
+Si se envían movimientos en secuencia, XRemoteBot los
+encola y los envía en orden:
+
+```javascript
+robot.forward(50, 1);     // El robot se mueve hacia adelante 1 segundo.
+robot.turnLeft(100, 0.5); // Luego gira a la izquierda durante medio segundo.
+```
+
+Pero hay que tener en cuenta que la ejecución del código
+no se demora por la invocación a estos métodos, en el
+ejemplo anterior el método `Robot#turnLeft()` no se ejecuta
+un segundo después de `Robot#forward()` sino que se ejecuta
+unos pocos milisegundos después del mismo.
+
+Para esperar a que realmente termine de realizar la acción
+el robot antes de proseguir es necesario usar `Promise#then()`:
+
+```javascript
+robot.forward(50, 1).then(function(){
+    alert('El robot acaba de detenerse');
+});
+```
+
+Se puede esperar a que termine toda una secuencia de movimientos
+encadenando las invocaciones a `Promise#then()` o bien utilizando
+`Promise#all()`:
+
+```javascript
+// Encadenando promesas
+robot.forward(50, 1).then(function(){
+    robot.turnLeft(100, 1);
+}).then(function(){
+    alert('El robot se detuvo');
+});
+
+// El mismo efecto con Promise#all()
+Promise.all([
+    robot.forward(50, 1),
+    robot.turnLeft(100, 1),
+]).then(function(){
+    alert('El robot se detuvo');
+});
+```
+
 Sensores
 ---------
+
+Los objetos `Robot` cuentan con los siguientes métodos
+para acceder a los valores de los sensores:
+
+* `Robot#getLine()`: Retorna una secuencia, de 2 elementos, con los valores
+    de los sensores de línea. El rango de los sensores depende
+    del modelo de robot usado.
+* `Robot#ping()`: Retorna la distancia aproximada de el objeto
+    más cercano al robot. En el caso de los robots N6 esta distancia
+    está en centímetros y tiene un rango de 0 a 600, en el caso
+    de los robots scribbler la distancia es una aproximación a
+    centímetros y tiene un rango de 0 a 92.
+* `Robot#getObstacle()`: Retorna `True` si hay un obstáculo. Si
+    se le envía un parámetro, éste determina la distancia máxima
+    a la que
+    debe estar un objeto para considerarse un obstáculo.
+
+En todos los casos es necesario usar `Promise#then()` para acceder
+al valor retornado, por ejemplo:
+
+```javascript
+robot.getObstacle().then(function(obstacle){
+    if (obstacle){
+        alert('Hay un obstáculo');
+    }
+    else{
+        alert('No hay obstáculo');
+    }
+});
+```

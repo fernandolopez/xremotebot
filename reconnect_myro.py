@@ -10,6 +10,7 @@ class Scribbler:
     @staticmethod
     def release_rfcomm():
         for device in glob('/dev/rfcomm*'):
+            run('rfcomm', 'release', device, stdout=None, stderr=None)
             try:
                 status, out, err = run('lsof', '-t', device)
             except OSError:
@@ -17,7 +18,6 @@ class Scribbler:
             else:
                 for pid in out.splitlines():
                     os.kill(int(pid), 9)
-            run('rfcomm', 'release', device, stdout=None, stderr=None)
 
     @staticmethod
     def bind_rfcomm(macs):

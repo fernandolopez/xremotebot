@@ -26,7 +26,7 @@ kill_old_daemons()
 
 if not exists('test.db'):
     print('Creando la base de datos')
-    run(venvpy, 'deploy_db.py')
+    run(venvpy, 'deploy_db.py', stdout=None, stderr=None)
 
 
 if len(conf.robots.get('scribbler', [])) > 0:
@@ -44,7 +44,7 @@ node = runbg('node', 'streaming/stream-server.js', 'jiji')
 with open('node.pid', 'w') as f:
     f.write(str(node.pid))
 
-print('Esperando a que el servicio de streaming aranque')
+print('Esperando a que el servicio de streaming arranque')
 time.sleep(1)
 avconv = runbg('avconv', '-s', '640x480', '-f', 'video4linux2', '-i', 
                '/dev/video0', '-f', 'mpeg1video', '-b', '800k', '-r',

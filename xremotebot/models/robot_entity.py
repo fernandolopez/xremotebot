@@ -14,19 +14,19 @@ from xremotebot.robots.abstract_classes import Robot as RobotABC
 robot_models = robots.keys()
 robot_modules = {}
 robot_instances = {}
-
-for model in robot_models:
-    logger.debug('Importing "%s" plugin module', model)
-    robot_modules[model] = importlib.import_module(
-        '.'.join(('xremotebot.robots', model)))
-    for id_ in robots[model]:
-        id_ = str(id_)
-        logger.debug('Accessing "%s.Robot(%s)"', model, id_)
-        try:
-            robot_instances[(model, id_)] =\
-                getattr(robot_modules[model], 'Robot')(id_)
-        except Exception as e:
-            logger.error('Error creating instance of %s/%s. %s', model, id_, e.message)
+def initialize_robots():
+    for model in robot_models:
+        logger.debug('Importing "%s" plugin module', model)
+        robot_modules[model] = importlib.import_module(
+            '.'.join(('xremotebot.robots', model)))
+        for id_ in robots[model]:
+            id_ = str(id_)
+            logger.debug('Accessing "%s.Robot(%s)"', model, id_)
+            try:
+                robot_instances[(model, id_)] =\
+                    getattr(robot_modules[model], 'Robot')(id_)
+            except Exception as e:
+                logger.error('Error creating instance of %s/%s. %s', model, id_, e.message)
 
 
 def _normalize_speed(s):

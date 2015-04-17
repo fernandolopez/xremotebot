@@ -12,13 +12,14 @@ class DocHandler(BaseHandler):
 
     def get(self, slug):
         buffer = io.BytesIO()
-        if slug is None:
-            slug = ''
-        slug = slug.replace('/', '')
-        if slug in ('ruby', 'python', 'javascript'):
-            doc = slug
+        if slug is not None:
+            slug = slug.replace('/', '')
+
+        if slug not in ('ruby', 'python', 'javascript'):
+            self.redirect('/doc/javascript')
         else:
-            doc = 'index'
+            doc = slug
+
         markdown.markdownFromFile(
             os.path.join(self.docbase, doc + '.md'),
             buffer,
@@ -32,4 +33,4 @@ class DocHandler(BaseHandler):
             },
         )
         buffer.seek(0)
-        self.render('container.html', body=buffer.read() + str(slug))
+        self.render('container.html', body=buffer.read())

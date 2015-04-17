@@ -8,21 +8,14 @@ Instalación
 -----------
 
 
-1. Instalar el [intérprete de Python](https://www.python.org/downloads/).
+1. Instalar el [intérprete de Ruby](https://www.ruby-lang.org/es/downloads/).
     * GNU/Linux: En muchas distribuciones viene preinstalado, en la mayoría
     puede ser instalado usando el gestor de paquetes de la distribución. Por
     ejemplo, en las distribuciones basadas en Debian, como Lihuen puede
-    instalarse con `apt-get install python2.7`.
-    * Mac OS X: [ver el área de descargas del sitio de Python](https://www.python.org/downloads/mac-osx/).
-    * Windows: [ver el área de descargas del sitio de Python](https://www.python.org/downloads/windows/).
-1. Instalar el gestor de paquetes PIP:
-    * GNU/Linux: Intentar instalarlo con el gestor de paquetes de la
-    distribución (en sistemas basados en Debian este paquete tiene
-    el nombre python-pip). Si esto no es posible seguir las instrucciones
-    para "Otros sistemas".
-    * Otros sistemas: [ver las instrucciones en el sitio de
-     PIP](https://pip.pypa.io/en/latest/installing.html).
-1. Instalar el cliente usando PIP: `pip install xremotebot-client`
+    instalarse con `apt-get install ruby2.1`.
+    * Otros sistemas: [Ver la guía de instalación de
+    Ruby](https://www.ruby-lang.org/es/documentation/installation/)
+1. Instalar el cliente usando Rubygems: `gem install xremotebot-client`
 
 
 
@@ -32,9 +25,9 @@ Conexión al servidor
 El código para conectarse implica instanciar un objeto `Server` pasándole
 la URL de la API de XRemoteBot y una API key válida:
 
-```python
-from xremotebot import *
-server = Server ('ws://localhost:8000/api', '4b9902d3-3295-41b9-a0f5-8bc2015d0ece')
+```ruby
+require 'xremotebot'
+server = XRemoteBot::Server.new('localhost', 8000, '/api', '4b9902d3-3295-41b9-a0f5-8bc2015d0ece')
 ```
 
 Si el servidor se encuentra configurado para uso local es posible invocarlo
@@ -43,8 +36,8 @@ sin la API key.
 Funciones útiles
 ----------------
 
-`wait()` recibe un número que indica cuantos segundos demorar la ejecución
-del programa. Equivale a invocar a `time.sleep()` con el mismo argumento.
+`XRemoteBot.wait()` recibe un número que indica cuantos segundos demorar la ejecución
+del programa. Equivale a invocar a `sleep()` con el mismo argumento.
 
 Obteniendo información de los robots
 ------------------------------------
@@ -53,9 +46,9 @@ Obteniendo información de los robots
 
 El método `Server#get_robots()` retorna la lista de los robots libres.
 
-```python
-robots = server.get_robots()
-print(robots)
+```ruby
+robots = server.get_robots
+print robot
 ```
 
 Salida en la consola:
@@ -74,12 +67,13 @@ El método `Server#reserve()` recibe como argumentos el modelo de un robot y
 un identificador e intenta reservar un robot específico. Si tiene éxito
 retorna un diccionario con los datos del robot:
 
-```python
-try:
+```ruby
+begin
     robot_data = server.reserve('n6', 10)
-    print(robot_data)
-except:
-    print('No se pudo hacer la reserva')
+    print robot_data
+rescue
+    print 'No se pudo hacer la reserva'
+end
 ```
 
 Salida en la consola en caso de éxito:
@@ -95,12 +89,13 @@ posible, un robot libre. Retorna un objeto con los datos del robot al
 igual que `Server#reserve()`. Sucesivas
 invocaciones a `Server#fetch_robot()` pueden retornar robots repetidos.
 
-```python
-try:
-    server.fetch_robot()
-    print(robot_data)
-except:
-    print('No se pudo hacer la reserva')
+```ruby
+begin
+    server.fetch_robot
+    print robot_data
+rescue
+    print 'No se pudo hacer la reserva'
+end
 ```
 
 Salida en la consola en caso de éxito:
@@ -117,13 +112,13 @@ haber reservado previamente un robot con `Server#reserve()` o
 `Server#fetch_robot()`. El constructor de `Robot` recibe dos argumentos: un
 objeto `Server` y el objeto retornado por `Server#reserve()` o `Server#fetch_robot()`.
 
-```python
-try:
-    robot_data = server.fetch_robot()
-except:
-    print('No se pudo hacer la reserva')
-
-robot = Robot(server, robot_data)
+```ruby
+begin
+    robot_data = server.fetch_robot
+rescue
+    print 'No se pudo hacer la reserva'
+end
+robot = XRemoteBot::Robot.new(server, robot_data)
 # ¡Tu código controlando al robot!
 ```
 
@@ -152,17 +147,17 @@ el robot se detendrá automáticamente.
 
 Por ejemplo:
 
-```python
-robot.forward()      # El robot se mueve indefinidamente
+```ruby
+robot.forward      # El robot se mueve indefinidamente
                      # a una velocidad predeterminada
 ```
 
-```python
+```ruby
 robot.forward(50)    # El robot se mueve indefinidamente
                      # a velocidad 50
 ```
 
-```python
+```ruby
 robot.forward(50, 1) # El robot se mueve a velocidad 50
                      # durante un segundo
 ```
@@ -181,7 +176,7 @@ para acceder a los valores de los sensores:
     está en centímetros y tiene un rango de 0 a 600, en el caso
     de los robots scribbler la distancia es una aproximación a
     centímetros y tiene un rango de 0 a 92.
-* `Robot#getObstacle()`: Retorna `True` si hay un obstáculo. Si
+* `Robot#getObstacle()`: Retorna `true` si hay un obstáculo. Si
     se le envía un parámetro, éste determina la distancia máxima
     a la que
     debe estar un objeto para considerarse un obstáculo.
