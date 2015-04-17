@@ -28,13 +28,16 @@ if not exists('test.db'):
     print('Creando la base de datos')
     run(venvpy, 'deploy_db.py')
 
-print('Creando dispositivos rfcomm para los robots scribbler')
 
-while True:
-    print('Se requiere la contraseña de root para continuar')
-    status, _, _ = run('su', '-c', ' '.join((venvpy, 'reconnect_myro.py')), stdout=None, stderr=None)
-    if status == 0:
-        break
+if len(conf.robots.get('scribbler', [])) > 0:
+    print('Creando dispositivos rfcomm para los robots scribbler')
+    while True:
+        print('Se requiere la contraseña de root para continuar')
+        status, _, _ = run(
+            'su', '-c', ' '.join((venvpy, 'reconnect_myro.py')),
+            stdout=None, stderr=None)
+        if status == 0:
+            break
 
 print('Iniciando streaming de video')
 node = runbg('node', 'streaming/stream-server.js', 'jiji')

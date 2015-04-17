@@ -1,3 +1,5 @@
+[TOC]
+
 Por las limitaciones del entorno el cliente Javascript es asincrónico y
 su uso está basado en la utilización de callbacks y Promises.
 
@@ -37,7 +39,7 @@ encuentra habilitado el modo "debug".
 Obteniendo información de los robots
 ------------------------------------
 
-### `get_robots()`
+### get_robots()
 
 El método `Server#get_robots()` retorna la lista de los robots libres.
 
@@ -57,7 +59,7 @@ Salida en la consola:
 ]
 ```
 
-### `reserve()`
+### reserve()
 
 El método `Server#reserve()` recibe como argumentos el modelo de un robot y
 un identificador e intenta reservar un robot específico. Si tiene éxito
@@ -77,7 +79,7 @@ Salida en la consola en caso de éxito:
 {"robot_id":"10","robot_model":"n6"},
 ```
 
-### `fetch_robot()`
+### fetch_robot()
 
 El método `Server#fetch_robot()` no recibe argumentos y reserva, si es
 posible, un robot libre. Retorna un objeto con los datos del robot al

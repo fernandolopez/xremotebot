@@ -2,4 +2,29 @@
 
 {% block body %}
 {% raw body %}
+<script>
+$('pre > code').each(function() {
+    var mode = 'text';
+    var $this = $(this),
+    $code = $this.html().trim();
+
+    $this.empty();
+
+    ['javascript', 'python', 'ruby'].forEach(function(lang){
+        if ($this.hasClass(lang)){
+            mode = lang;
+            return;
+        }
+    });
+    var myCodeMirror = CodeMirror(function(elem){
+        $this.parent().replaceWith(elem);
+    }, {
+        value: $code,
+        mode: mode,
+        lineNumbers: false,
+        readOnly: true,
+    });
+});
+$('.CodeMirror').css('height', 'auto');
+</script>
 {% end %}

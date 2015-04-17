@@ -1,9 +1,48 @@
-
 {% extends main.html %}
 
 {% block body %}
-<!-- FIXME: Contenido -->
-Cambiar contraseña
-
-Mostrar API Key y renovación
+<div id="error_placeholder" class="hidden alert alert-danger" role="alert"></div>
+<div class="panel panel-primary">
+    <div class="panel-heading">API key</div>
+    <div class="panel-body">
+        <form method="POST" id="user-data" action="/user" class="form-horizontal">
+            <div class="form-group">
+                <label for="api_key" class="col-sm-2 control-label">API key</label>
+                <div class="col-sm-10">
+                    <input type="text" name="api_key" id="api_key" class="form-control" readonly
+                     value={{api_key}}>
+                </div>
+            </div>
+            <input type="hidden" name="renew-api-key" value="1">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Renovar API key</button>
+            </div>
+            {% raw xsrf_form_html() %}
+        </form>
+    </div>
+</div>
+<div class="panel panel-primary">
+    <div class="panel-heading">Cambiar contrase&ntilde;a</div>
+    <div class="panel-body">
+        <form method="POST" id="user-data" action="/user" class="form-horizontal">
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">Contrase&ntilde;a</label>
+                <div class="col-sm-10">
+                    <input type="password" name="password" id="password" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="col-sm-2 control-label">Repetir contrase&ntilde;a</label>
+                <div class="col-sm-10">
+                    <input type="password" name="repeat-password" id="repeat-password" class="form-control">
+                </div>
+            </div>
+            <input type="hidden" name="change-password" value="1">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Cambiar contrase&ntilde;a</button>
+            </div>
+            {% raw xsrf_form_html() %}
+        </form>
+    </div>
+</div>
 {% end %}

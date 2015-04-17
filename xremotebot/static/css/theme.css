@@ -2,6 +2,21 @@ h1 {
     margin: 0 0.5em;
 }
 
+.toc {
+    display: block;
+    float: right;
+    border: 1px solid #ccc;
+    margin: 1em;
+    padding: 0.5em;
+}
+
+.toc > .toctitle {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 1em;
+}
+
 #run-button {
     margin: 10px;
 }

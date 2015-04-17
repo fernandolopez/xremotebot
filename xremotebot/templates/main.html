@@ -35,9 +35,15 @@
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul class="nav navbar-nav">
                             <li><a href="/javascript">Javascript</a></li>
-                            <li><a href="/doc">Documentaci&oacute;n</a></li>
-                            <li><a href="/doc/python">Python</a></li>
-                            <li><a href="/doc/ruby">Ruby</a></li>
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Documentaci&oacute;n <span class="caret"></span></a>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="/doc">Documentaci&oacute;n</a></li>
+                                    <li><a href="/doc/javascript">Javascript</a></li>
+                                    <li><a href="/doc/python">Python</a></li>
+                                    <li><a href="/doc/ruby">Ruby</a></li>
+                                </ul>
+                            </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li><a id='login' href="login">Entrar</a></li>
