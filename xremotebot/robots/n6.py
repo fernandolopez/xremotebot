@@ -32,7 +32,7 @@ class Robot(abcs.Robot):
     def ping(self):
         return self.robot.ping()
 
-    def getObstacle(self, distance):
+    def getObstacle(self, distance=10):
         return self.robot.getObstacle(distance)
 
     def stop(self):

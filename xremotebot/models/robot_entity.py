@@ -30,6 +30,8 @@ def initialize_robots():
 
 
 def _normalize_speed(s):
+    if s is None:
+        s = 50
     s = int(s)
     sign = 1 if s > 0 else -1
     s = abs(s)
@@ -105,4 +107,6 @@ class Robot(Entity, RobotABC):
 
     def getObstacle(self, wshandler, robot_obj, distance=10):
         logger.debug('getObstacle called on the Robot entity instance')
+        if distance is None:
+            distance = 10
         return robot_instances[_dict_to_tuple(robot_obj)].getObstacle(distance)

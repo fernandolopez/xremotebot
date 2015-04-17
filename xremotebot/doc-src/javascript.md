@@ -1,9 +1,14 @@
 [TOC]
 
-Por las limitaciones del entorno el cliente Javascript es asincrónico y
-su uso está basado en la utilización de callbacks y Promises.
+El cliente Javascript de XRemoteBot es asincrónico y
+su uso está basado en la utilización de callbacks y Promises. Esto
+es porque dentro del entorno de un navegador, en la mayoría de
+los casos, no es posible realizar operaciones bloqueantes, y cuando
+es posible no es recomendable
 
-Dentro de estas limitaciones, sin embargo, se intentó que las API de
+Esto hacer que el uso del cliente Javascript sea un poco más
+complejo que el uso de los clientes Python y Ruby.
+Sin embargo, se intentó que la API de
 este cliente se parezca lo más posible al resto.
 
 Conexión al servidor
@@ -234,3 +239,128 @@ robot.getObstacle().then(function(obstacle){
     }
 });
 ```
+
+Iteraciones y demoras
+---------------------
+
+Si bien es imposible tener operaciones bloqueantes que demoren
+la ejecución del resto del programa, es posible simular este
+comportamiento usando las funciones de Javascript `setTimeout()`,
+`setInterval()` o los objetos `Promise` retornados por la API.
+
+### Demoras con setTimeout()
+
+Por ejemplo, es para ejecutar una acción 5 segundos después
+de una primer acción se puede usar `setTimeout()`.
+
+```javascript
+robot.forward(50);
+setTimeout(function(){
+    $('h1').text('Pasaron 5 segundos');
+}, 5000);
+```
+
+### Iteraciones usando invocaciones a función y promesas
+
+En caso de las iteraciones es especial, ya que si usamos
+`while` o `for` el comportamiento no es intuitivo.
+
+Veamos un *mal* ejemplo de un programa para esquivar obstáculos:
+
+```javascript
+// Se ignora la inicialización de server y robot para
+// simplificar el ejemplo
+robot.forward();
+while (true){
+    robot.getObstacle().then(function(obstacle){
+        if (obstacle){
+            robot.backward(30, 1);
+            robot.turnLeft(40, 1);
+            robot.forward();
+        }
+    });
+}
+```
+
+Este script bloquea rápidamente el navegador, ya que el `while`
+encola en las estructuras de datos internas de XRemoteBot para
+Javascript, una secuencia infinita de mensajes `Robot#getObstacle()`.
+En algunos casos en navegador se bloquea sin llegar a enviar
+ni uno de esos mensajes.
+
+Esto es porque ninguna de las operaciones es bloqueante, todas
+se ejecutan en pocos milisegundos y retornan una promesa.
+
+Una forma mejor de implementar este mismo algoritmo sería
+generando un mensaje `Robot#getObstacle()` sólo cuando recibimos
+la respuesta del mensaje anterior. Esto se puede lograr usando una
+función "recursiva":
+
+```javascript
+// Se ignora la inicialización de server y robot para
+// simplificar el ejemplo
+
+function esquivar(){
+    robot.getObstacle().then(function(obstacle){
+        if (obstacle){
+            robot.backward(30, 1);
+            robot.turnLeft(40, 1);
+            robot.forward();
+        }
+        esquivar();
+    });
+}
+
+robot.forward();
+esquivar();
+```
+
+En el párrafo anterior se escribió "recursiva" usando comillas,
+porque realmente no es recursiva ya que `esquivar()` no se
+invoca a si misma, sino que es la promesa retornada por
+`Robot#getObstacle()`, la que lo invoca.
+
+Si fuera una recursión real
+eventualmente se llenaría el stack del intérprete de
+Javascript.
+
+### Operaciones repetidas con setInterval()
+
+Si el intervalo de tiempo entre una operación y otra no
+es muy chico (de manera que no se encolan operaciones sin
+respuesta) es posible utilizar la función de Javascript
+`setInterval()` para repetir operaciones.
+
+Por ejemplo, el siguiente ejemplo actualiza el encabezado de
+la página con los valores del sensor de línea, cada 1 segundo:
+
+```javascript
+setInterval(function(){
+    robot.getLine().then(function(line){
+        $('h1').text(line);
+    });
+}, 1000);
+```
+
+Por supuesto también es posible escribir este ejemplo
+sin usar `setInterval()` como se explica en el punto
+anterior.
+
+### setTimeout() y setInteval() VS. window.setTimeout() y window.setInterval()
+
+Para detener un `setInterval()` o un `setTimeout()` es necesario invocar
+a `clearInterval()` o `clearTimeout()` o recargar la página.
+
+Para que la ejecución de un script que use estas funciones no interfiera
+con una ejecución posterior, XRemoteBot para Javascript, provee
+su propia versión de estas funciones. Estas versiones de
+`setTimeout()` y `setInterval()` son iguales a las originales
+(accesibles con `window.setTimeout()` y `window.setInterval()`)
+excepto que también se interrumpe su ejecución al presionar el
+botón "Ejecutar" de la interfaz web.
+
+Por lo tanto es recomendable usar `setTimeout()` y `setInterval()`, pero
+si el usuario así lo desea, puede invocar a las funciones originales
+con su nombre precedido de `window.`.
+
+
