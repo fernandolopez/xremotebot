@@ -4,15 +4,27 @@
 <!-- FIXME: Contenido -->
 <div class="row">
     <div class="col-xs-12 col-md-8">
+        <p>XRemoteBot es una aplicaci&oacute;n desarrollada por Fernando
+        L&oacute;pez como trabajo final de la carrera Licenciatura en
+        Inform&aacute;tica de la
+        <a href="http://info.unlp.edu.ar">Facultad de Inform&aacute;tica</a>
+        de la <a href="http://unlp.edu.ar">UNLP</a>.
+
         <p>XRemoteBot permite programar robots de forma remota en Javascript, Python
         y Ruby.</p>
-        <p>Pod&eacute;s empezar a probar los robots sin instalar nada program&aacute;ndolos en
-        Javascript desde esta p&aacute;gina. Si te gusta la idea pod&eacute;s instalar el
-        cliente Python o el cliente Ruby para programar los robots usando estos
+        <p>Pod&eacute;s empezar a probar los robots sin instalar ning&uacute;n software,
+        program&aacute;ndolos en
+        Javascript desde esta p&aacute;gina, en la solapa
+        <a href="/javascript">"&iexcl;Empez&aacute; a programar!"</a>.
+        Si te gusta la idea pod&eacute;s instalar el
+        <a href="https://github.com/fernandolopez/xremotebot-clients">cliente Python
+        o el cliente Ruby</a> para programar los robots usando estos
         lenguajes.</p>
-        <p>Para empezar a usar los robots cre&aacute; un usuario.</p>
-        <p>Esta implementación soporta robots Multiplo N6 de RobotGroup y Scribbler de
-        Parallax. En este momento los siguientes robots se encuentran conectados:</p>
+        <p>Para empezar a usar los robots <a href="/signin">cre&aacute; un usuario</a>.</p>
+        <p>Esta implementación soporta robots
+        <a href="http://www.robotgroup.com.ar/index.php/productos/131-robot-n6">Multiplo N6 de RobotGroup</a>
+        y <a href="http://wiki.roboteducation.org/Myro_Hardware">Scribbler de Parallax</a>.
+        En este momento los siguientes robots se encuentran conectados:</p>
         <ul>
         {% for model, ids in robots.items() %}
             <li>{{model}}:
