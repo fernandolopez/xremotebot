@@ -15,7 +15,7 @@ class DocHandler(BaseHandler):
         if slug is not None:
             slug = slug.replace('/', '')
 
-        if slug not in ('ruby', 'python', 'javascript'):
+        if slug not in ('ruby', 'python', 'javascript', 'quickref'):
             self.redirect('/doc/javascript')
         else:
             doc = slug
