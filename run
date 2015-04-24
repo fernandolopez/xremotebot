@@ -5,8 +5,11 @@ import os
 import time
 import xremotebot.configuration as conf
 from util import run, runbg
+import uuid
 
-PWD=realpath(dirname(__file__))
+secret = uuid.uuid4().hex
+
+PWD = realpath(dirname(__file__))
 os.chdir(PWD)
 
 venvpy = join(PWD, 'bin', 'python')
@@ -40,15 +43,18 @@ if len(conf.robots.get('scribbler', [])) > 0:
             break
 
 print('Iniciando streaming de video')
-node = runbg('node', 'streaming/stream-server.js', 'jiji')
+node = runbg('node', 'streaming/stream-server.js',
+             secret, '8082', str(conf.video_ws_port))
 with open('node.pid', 'w') as f:
     f.write(str(node.pid))
 
 print('Esperando a que el servicio de streaming arranque')
 time.sleep(1)
-avconv = runbg('avconv', '-s', '640x480', '-f', 'video4linux2', '-i', 
-               '/dev/video0', '-f', 'mpeg1video', '-b', '800k', '-r',
-               '30', 'http://localhost:8082/jiji/640/480/', '-v', 'quiet')
+avconv = runbg('avconv', '-s', '640x480', '-f', 'video4linux2', '-i',
+               conf.camera_device, '-f', 'mpeg1video', '-b', '800k', '-r',
+               '30', 'http://localhost:8082/{}/640/480/'.format(secret),
+               '-v', 'quiet')
+
 with open('avconv.pid', 'w') as f:
     f.write(str(avconv.pid))
 

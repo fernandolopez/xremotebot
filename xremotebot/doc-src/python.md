@@ -30,7 +30,7 @@ Conexión al servidor
 --------------------
 
 El código para conectarse implica instanciar un objeto `Server` pasándole
-la URL de la API de XRemoteBot y una API key válida:
+la URL de la API de XRemoteBot y una [API key](/user) válida:
 
 ```python
 from xremotebot import *

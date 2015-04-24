@@ -18,7 +18,9 @@ La forma más sencilla de empezar a usar el cliente Javascript es, simplemente,
 usando el ejemplo [provisto en su página](/javascript).
 
 El código para conectarse implica instanciar un objeto `Server` pasándole
-la URL de la API de XRemoteBot y una API key válida e invocar al método
+la URL de la API de XRemoteBot y una
+[API key](/user)
+válida e invocar al método
 `Server#onConnect()` pasándole como argumento una función. Esta función
 se ejecutará cuando la conexión se establezca:
 
