@@ -113,7 +113,7 @@ class Reservation(Base):
     @classmethod
     def reserve_any(cls, user, all_robots=None, session=None):
         session = get_session(session)
-        available = Reservation.available(all_robots=all_robots, session=session)
+        available = Reservation.available(all_robots=all_robots, now=None, session=session)
         reservation = None
         if available:
             robot = available.pop()
