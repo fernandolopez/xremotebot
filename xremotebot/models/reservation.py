@@ -59,7 +59,7 @@ class Reservation(Base):
         return reservations.all()
 
     @classmethod
-    def reserve(cls, user, robot_model, robot_id, date_from=None, date_to=None, session=None):
+    def reserve(cls, user, robot_model, robot_id, all_robots=None, date_from=None, date_to=None, session=None):
         session = get_session(session)
 
         if date_from is None:
@@ -71,7 +71,10 @@ class Reservation(Base):
         if len(res) > 0:
             # If the robot is reserved by the same user, return it
             return res[0]
-        if (robot_model, str(robot_id)) not in cls.available():
+        if (robot_model, str(robot_id)) not in cls.available(all_robots=all_robots,
+                                                             date_from=date_from,
+                                                             date_to=date_to,
+                                                             session=session):
             # If the robot is reserved by other user return None
             return None
 
@@ -86,34 +89,48 @@ class Reservation(Base):
         return reservation
 
     @classmethod
-    def all_reserved(cls, now=None, session=None):
+    def all_reserved(cls, date_from, date_to, session=None):
         session = get_session(session)
-        if now is None:
-            now = datetime.now()
-        res = session.query(Reservation).filter(
-            and_(now >= Reservation.date_from,
-                 now <  Reservation.date_to),
+        reservations = session.query(Reservation).filter(
+            or_(
+                and_(date_from >= Reservation.date_from,
+                     date_from <  Reservation.date_to),
+
+                and_(date_to   <= Reservation.date_to,
+                     date_to   >  Reservation.date_from),
+
+                and_(date_from <= Reservation.date_from,
+                     date_to   >= Reservation.date_to)
+           )
         )
-        return res.all()
+        return reservations.all()
 
     @classmethod
-    def available(cls, all_robots=None, now=None, session=None):
+    def available(cls, all_robots=None, date_from=None, date_to=None, session=None):
         session = get_session(session)
         reserved = set()
+
+        if date_from is None or date_to is None:
+            date_from = datetime.now()
+            date_to = date_from + configuration.reservation_expiration
 
         if all_robots is None:
             all_robots = configuration.robots
 
-        for res in cls.all_reserved(now=now, session=session):
+        for res in cls.all_reserved(date_from, date_to, session=session):
             reserved.add((res.robot_model, res.robot_id))
         all_ = {(model, str(id_)) for model, ids in all_robots.items() for id_ in ids}
 
         return all_ - reserved
 
     @classmethod
-    def reserve_any(cls, user, all_robots=None, session=None):
+    def reserve_any(cls, user, all_robots=None, date_from=None, date_to=None,
+                    session=None):
         session = get_session(session)
-        available = Reservation.available(all_robots=all_robots, now=None, session=session)
+        available = Reservation.available(all_robots=all_robots,
+                                          date_from=date_from,
+                                          date_to=date_to,
+                                          session=session)
         reservation = None
         if available:
             robot = available.pop()
@@ -121,6 +138,7 @@ class Reservation(Base):
                 user,
                 robot[0],
                 robot[1],
+                all_robots=all_robots,
                 date_from=datetime.now(),
                 date_to=datetime.now() + configuration.reservation_expiration,
                 session=session,
