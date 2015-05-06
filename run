@@ -42,26 +42,22 @@ if len(conf.robots.get('scribbler', [])) > 0:
         if status == 0:
             break
 
-print('Iniciando streaming de video')
-node = runbg('node', 'streaming/stream-server.js',
-             secret, '8082', str(conf.video_ws_port))
-with open('node.pid', 'w') as f:
-    f.write(str(node.pid))
+if not conf.disable_streaming and not conf.use_embed_streaming:
+    print('Iniciando streaming de video')
+    node = runbg('node', 'streaming/stream-server.js',
+                 secret, '8082', str(conf.video_ws_port))
+    with open('node.pid', 'w') as f:
+        f.write(str(node.pid))
 
-print('Esperando a que el servicio de streaming arranque')
-time.sleep(1)
-#avconv = runbg('avconv', '-s', '640x480', '-f', 'video4linux2', '-i',
-#               conf.camera_device, '-f', 'mpeg1video', '-b', '800k', '-r',
-#               '30', 'http://localhost:8082/{}/640/480/'.format(secret),
-#               '-v', 'quiet')
-avconv = runbg('avconv', '-f', 'rtsp', '-i',
-               'rtsp://192.168.0.2:554/live2.sdp', '-f', 'mpeg1video',
-               '-b', '800k', '-r', '30', '-s', '640x480',
-               'http://localhost:8082/{}/640/480/'.format(secret),
-               '-v', 'quiet')
+    print('Esperando a que el servicio de streaming arranque')
+    time.sleep(1)
+    avconv = runbg('avconv', '-s', '640x480', '-f', 'video4linux2', '-i',
+                   conf.camera_device, '-f', 'mpeg1video', '-b', '800k', '-r',
+                   '30', 'http://localhost:8082/{}/640/480/'.format(secret),
+                   '-v', 'quiet')
 
-with open('avconv.pid', 'w') as f:
-    f.write(str(avconv.pid))
+    with open('avconv.pid', 'w') as f:
+        f.write(str(avconv.pid))
 
 try:
     run(venvpy, 'app.py', stdout=None, stderr=None)

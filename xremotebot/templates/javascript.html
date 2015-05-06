@@ -40,6 +40,11 @@
           <img class="center-block" id="videoCanvas" width="640" height="480"
           src="/img/camera_disabled.svg">
 {% else %}
+    {% if use_embed_streaming %}
+        <div class="center-block">
+            {% raw embed_streaming %}
+        </div>
+    {% else %}
           <canvas class="center-block" id="videoCanvas" width="640" height="480">
               <p>
               Su navegador no soporta el elemento Canvas, pruebe con:
@@ -48,6 +53,7 @@
               <a href="http://www.apple.com/safari/">Safari</a> o Internet Explorer 10
               </p>
           </canvas>
+    {% end %}
 {% end %}
           <div class="checkbox">
               <label>
@@ -80,7 +86,7 @@
     });
 
 </script>
-{% if not disable_streaming %}
+{% if not disable_streaming and not use_embed_streaming %}
     <script type="text/javascript" src="js/jsmpg.js"></script>
     <script type="text/javascript">
     // Show loading notice

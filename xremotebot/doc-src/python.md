@@ -22,7 +22,7 @@ Instalación
     para "Otros sistemas".
     * Otros sistemas: [ver las instrucciones en el sitio de
      PIP](https://pip.pypa.io/en/latest/installing.html).
-1. Instalar el cliente usando PIP: `pip install xremotebot-client`
+1. Instalar el cliente usando PIP: `pip install xremotebot`
 
 
 

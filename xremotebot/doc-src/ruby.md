@@ -15,7 +15,7 @@ Instalación
     instalarse con `apt-get install ruby2.1`.
     * Otros sistemas: [Ver la guía de instalación de
     Ruby](https://www.ruby-lang.org/es/documentation/installation/)
-1. Instalar el cliente usando Rubygems: `gem install xremotebot-client`
+1. Instalar el cliente usando Rubygems: `gem install xremotebot`
 
 
 
