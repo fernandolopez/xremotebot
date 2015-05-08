@@ -56,7 +56,7 @@ time.sleep(1)
 #               '-v', 'quiet')
 avconv = runbg('avconv', '-f', 'rtsp', '-i',
                'rtsp://192.168.0.2:554/live2.sdp', '-f', 'mpeg1video',
-               '-b', '800k', '-r', '30',
+               '-b', '800k', '-r', '30', '-s', '640x480',
                'http://localhost:8082/{}/640/480/'.format(secret),
                '-v', 'quiet')
 

@@ -29,7 +29,7 @@ dburi = 'sqlite:///test.db'
 tls = False
 disable_streaming = False
 camera_device = '/dev/video0'
-hostname = '127.0.0.1' # 'xremotebot.example'
+hostname = '163.10.10.85' # 'xremotebot.example'
 video_ws_port = 8084
 video_ws = 'ws://{}:{}/'.format(hostname, video_ws_port)
 log_level = 'DEBUG'
@@ -40,5 +40,5 @@ api_key_expiration = days(700)
 reservation_expiration = hours(1)
 robots = {
     'n6': [3],
-    #  'scribbler': ['00:1E:19:01:0B:81'],
+    'scribbler': ['00:1E:19:01:0B:81'],
 }
