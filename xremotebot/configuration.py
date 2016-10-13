@@ -27,7 +27,7 @@ settings = {
 }
 dburi = 'sqlite:///test.db'
 tls = False
-log_level = 'DEBUG'
+log_level = 'INFO'
 log_file = 'xremotebot.log'
 port = 8000
 public_server = False
@@ -37,12 +37,11 @@ robots = {
     'n6': [9]
 }
 
-
 # STREAMING
 disable_streaming = False
 camera_device = '/dev/video0'
-framerate = '25'
-resolution = '640x480'
+framerate = '30'
+resolution = '352x288'
 use_embed_streaming = False
 embed_streaming = '''<iframe width="360" height="302"
 src="http://www.ustream.tv/embed/20521415?v=3&amp;wmode=direct&autoplay=true&quality=low&showtitle=false"

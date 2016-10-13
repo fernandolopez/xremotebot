@@ -17,7 +17,7 @@ class Robot(abcs.Robot):
 
     def motors(self, left, right):
         self.robot.motors(left, right)
-        logger.info('motors(%d, %d) on robot %s %d',
+        logger.debug('motors(%d, %d) on robot %s %d',
                      left, right, self.__class__, self.id)
 
     def analog(self, pin, samples=1):

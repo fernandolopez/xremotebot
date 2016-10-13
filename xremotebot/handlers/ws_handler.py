@@ -139,8 +139,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
         handler = self.handlers.get(entity, None)
         # FIXME
-        logger.info('{%s}', method)
-        logger.info(handler)
+        logger.debug('{%s}', method)
+        logger.debug(handler)
         if handler is None:
             logger.info('"%s" entity not supported', entity)
             self.write_message(error('"{}" entity not supported'.format(entity)))
