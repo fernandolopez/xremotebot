@@ -1,4 +1,5 @@
 /bin
+/usr
 /include
 /lib
 /pyvenv.cfg

@@ -27,8 +27,22 @@ settings = {
 }
 dburi = 'sqlite:///test.db'
 tls = False
+log_level = 'DEBUG'
+log_file = 'xremotebot.log'
+port = 8000
+public_server = False
+api_key_expiration = days(700)
+reservation_expiration = hours(1)
+robots = {
+    'n6': [9]
+}
+
+
+# STREAMING
 disable_streaming = False
 camera_device = '/dev/video0'
+framerate = '25'
+resolution = '640x480'
 use_embed_streaming = False
 embed_streaming = '''<iframe width="360" height="302"
 src="http://www.ustream.tv/embed/20521415?v=3&amp;wmode=direct&autoplay=true&quality=low&showtitle=false"
@@ -42,15 +56,3 @@ target="_blank">Broadcast live streaming video on Ustream</a>'''
 hostname = '190.16.204.135' # 'xremotebot.example'
 video_ws_port = 8084
 video_ws = 'ws://{}:{}/'.format(hostname, video_ws_port)
-log_level = 'DEBUG'
-log_file = 'xremotebot.log'
-port = 8000
-public_server = True
-api_key_expiration = days(700)
-reservation_expiration = hours(1)
-robots = {
-    'n6': [3],
-    'scribbler': ['00:1E:19:01:0B:81'],
-}
-framerate = '25'
-resolution = '640x480'
