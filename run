@@ -44,17 +44,14 @@ if len(conf.robots.get('scribbler', [])) > 0:
 
 if not conf.disable_streaming and not conf.use_embed_streaming:
     print('Iniciando streaming de video')
-    node = runbg('node', 'streaming/stream-server.js',
-                 secret, '8082', str(conf.video_ws_port))
+    node = runbg('ffserver', '-f','ffserver.conf')
     with open('node.pid', 'w') as f:
         f.write(str(node.pid))
 
     print('Esperando a que el servicio de streaming arranque')
-    time.sleep(1)
-    avconv = runbg('avconv', '-s', '640x480', '-f', 'video4linux2', '-i',
-                   conf.camera_device, '-f', 'mpeg1video', '-b', '800k', '-r',
-                   '30', 'http://localhost:8082/{}/640/480/'.format(secret),
-                   '-v', 'quiet')
+    time.sleep(2)
+    avconv = runbg('ffmpeg', '-f', 'video4linux2', '-r', conf.framerate, '-s', conf.resolution, '-i', 
+                   conf.camera_device, 'http://localhost:1234/feed1.ffm' ,'-v', 'quiet')
 
     with open('avconv.pid', 'w') as f:
         f.write(str(avconv.pid))
@@ -65,3 +62,4 @@ except KeyboardInterrupt:
     pass
 finally:
     kill_old_daemons()
+

@@ -52,3 +52,5 @@ robots = {
     'n6': [3],
     'scribbler': ['00:1E:19:01:0B:81'],
 }
+framerate = '25'
+resolution = '640x480'
