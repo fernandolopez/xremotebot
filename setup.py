@@ -7,6 +7,7 @@ test_deps = [
     'nose',
     'pyinotify',
     'sniffer',
+    'mock',
 ]
 
 setup(

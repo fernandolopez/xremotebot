@@ -1,9 +1,11 @@
-import unittest
-from datetime import datetime, timedelta
-from xremotebot.models.reservation import Reservation
-from xremotebot.models.user import User
 from .test_helper import db
+from datetime import datetime, timedelta
+from operator import and_, or_
+from xremotebot.models.reservation import Reservation, _includes, _overlaps, _conflicts
+from xremotebot.models.user import User
+import unittest
 import xremotebot.models.reservation
+from mock import patch
 
 
 class ReservationTest(unittest.TestCase):
@@ -11,45 +13,42 @@ class ReservationTest(unittest.TestCase):
         (engine, self.session) = db()
 
         xremotebot.models.reservation.Base.metadata.create_all(engine)
-        self.all_robots = { 'n6': ['42'] }
-        self.session.add(Reservation(robot_model='N6',
-                                     robot_id='42',
-                                     date_from=datetime(2000, 1, 1),
-                                     date_to=datetime(2000, 1, 2)))
+        self.all_robots = {'n6': ['42']}
+        reservation = Reservation(
+            robot_model='N6',
+            robot_id='42',
+            date_from=datetime(2000, 1, 1),
+            date_to=datetime(2000, 1, 2)
+        )
         self.user = User(
             username='test',
             password='magic',
             api_key='random',
             api_key_expiration=datetime.now() + timedelta(5)
-         )
+        )
 
+        reservation.user = self.user
         self.session.add(self.user)
         self.session.commit()
 
-
-    def test_new_reservation_contains_older_one(self):
-        reserved = Reservation.reserved(self.user, 'N6', '42',
-                                        datetime(1999, 12, 31),
-                                        datetime(2000, 1, 3), self.session)
-        self.assertEqual(1, len(reserved))
-
-    def test_new_reservation_is_possible(self):
+    def test_reserved_disjoint_reservation_returns_empty(self):
         reserved = Reservation.reserved(self.user,
                                         'N6', '42', datetime(2000, 1, 2),
                                         datetime(2000, 1, 3), self.session)
         self.assertEqual(0, len(reserved))
 
-    def test_new_reservation_overlaps_at_the_end(self):
+    def test_reserved_overlaping_reservation_in_the_beginning_can_be_found(self):
+        reserved = Reservation.reserved(self.user, 'N6', '42',
+                                        datetime(1999, 12, 31),
+                                        datetime(2000, 1, 3), self.session)
+        self.assertEqual(1, len(reserved))
+
+    def test_reserved_overlaping_reservation_at_the_end_can_be_found(self):
         reserved = Reservation.reserved(self.user,
                                         'N6', '42',
                                         datetime(2000, 1, 1) + timedelta(hours=12),
                                         datetime(2000, 1, 3), self.session)
         self.assertEqual(1, len(reserved))
-
-    def test_new_reservation_overlaps_at_the_begining(self):
-        reserved = Reservation.reserved(self.user, 'N6', '42',
-                                        datetime(2000, 1, 1) - timedelta(hours=12),
-                                        datetime(2000, 1, 1) + timedelta(hours=1), self.session)
 
     def test_reserve_free_robot_returns_an_instance(self):
         reservation = Reservation.reserve(self.user,
@@ -115,4 +114,35 @@ class ReservationTest(unittest.TestCase):
         self.assertIsNone(robot)
 
 
+@patch('xremotebot.models.reservation.and_', and_)
+@patch('xremotebot.models.reservation.or_', or_)
+class ReservationUtilsTest(unittest.TestCase):
+    def test_includes_date_is_the_same(self):
+        d1_from = datetime(2000, 1, 1, 11)
+        d1_to = datetime(2000, 1, 1, 22)
+        self.assertTrue(_includes(d1_from, d1_to, d1_from, d1_to))
 
+    def test_includes_returns_true_on_nested_dates(self):
+        d1_from = datetime(2000, 1, 1, 11)
+        d1_to = datetime(2000, 1, 1, 22)
+        d2_from = datetime(2000, 1, 1, 13)
+        d2_to = datetime(2000, 1, 1, 20)
+        self.assertTrue(_includes(d1_from, d1_to, d2_from, d2_to))
+
+    def test_conflicts_return_false_on_disjoint_dates(self):
+        d1_from = datetime(2000, 1, 1, 11)
+        d1_to = datetime(2000, 1, 1, 22)
+        d2_from = datetime(2000, 1, 1, 8)
+        d2_to = datetime(2000, 1, 1, 10)
+        self.assertFalse(_conflicts(d1_from, d1_to, d2_from, d2_to))
+
+    def test_overlaps_returns_true_if_one_range_contains_the_beginning_or_the_end_of_the_other(self):
+        d1_from = datetime(2000, 1, 1, 11)
+        d1_to = datetime(2000, 1, 1, 22)
+        d2_from = datetime(2000, 1, 1, 10)
+        d2_to = datetime(2000, 1, 1, 12)
+        self.assertTrue(_overlaps(d1_from, d1_to, d2_from, d2_to))
+
+        d2_from = datetime(2000, 1, 1, 21)
+        d2_to = datetime(2000, 1, 1, 23)
+        self.assertTrue(_overlaps(d1_from, d1_to, d2_from, d2_to))

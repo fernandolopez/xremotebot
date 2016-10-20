@@ -7,6 +7,33 @@ from .user import User
 from ..lib.db import Base, get_session
 
 
+def _includes(r1_from, r1_to, r2_from, r2_to):
+    return or_(
+        and_(
+            r1_from >= r2_from,
+            r1_to <= r2_to,
+        ),
+        and_(
+            r1_from <= r2_from,
+            r1_to >= r2_to,
+        ),
+    )
+
+
+def _overlaps(r1_from, r1_to, r2_from, r2_to):
+    return or_(
+        and_(r1_from <= r2_from, r2_from <= r1_to),
+        and_(r1_from <= r2_to, r2_to <= r1_to),
+    )
+
+
+def _conflicts(r1_from, r1_to, r2_from, r2_to):
+    return or_(
+        _includes(r1_from, r1_to, r2_from, r2_to),
+        _overlaps(r1_from, r1_to, r2_from, r2_to),
+    )
+
+
 class Reservation(Base):
     __tablename__ = 'reservations'
     id          = Column(Integer, primary_key=True)
@@ -25,16 +52,12 @@ class Reservation(Base):
                  Reservation.robot_id == robot_id,
                  Reservation.user == user)
         ).filter(
-            or_(
-                and_(date_from >= Reservation.date_from,
-                     date_from <  Reservation.date_to),
-
-                and_(date_to   <= Reservation.date_to,
-                     date_to   >  Reservation.date_from),
-
-                and_(date_from <= Reservation.date_from,
-                     date_to   >= Reservation.date_to)
-           )
+            _conflicts(
+                date_from,
+                date_to,
+                Reservation.date_from,
+                Reservation.date_to,
+            )
         )
         return reservations.all()
 
@@ -45,16 +68,12 @@ class Reservation(Base):
             and_(Reservation.robot_model == robot_model,
                  Reservation.robot_id == robot_id)
         ).filter(
-            or_(
-                and_(date_from >= Reservation.date_from,
-                     date_from <  Reservation.date_to),
-
-                and_(date_to   <= Reservation.date_to,
-                     date_to   >  Reservation.date_from),
-
-                and_(date_from <= Reservation.date_from,
-                     date_to   >= Reservation.date_to)
-           )
+            _conflicts(
+                date_from,
+                date_to,
+                Reservation.date_from,
+                Reservation.date_to,
+            )
         )
         return reservations.all()
 
@@ -92,16 +111,12 @@ class Reservation(Base):
     def all_reserved(cls, date_from, date_to, session=None):
         session = get_session(session)
         reservations = session.query(Reservation).filter(
-            or_(
-                and_(date_from >= Reservation.date_from,
-                     date_from <  Reservation.date_to),
-
-                and_(date_to   <= Reservation.date_to,
-                     date_to   >  Reservation.date_from),
-
-                and_(date_from <= Reservation.date_from,
-                     date_to   >= Reservation.date_to)
-           )
+            _conflicts(
+                date_from,
+                date_to,
+                Reservation.date_from,
+                Reservation.date_to,
+            )
         )
         return reservations.all()
 
