@@ -9,7 +9,7 @@ from .user import User
 from .reservation import Reservation
 
 from xremotebot.configuration import robots, public_server
-from xremotebot.lib.exceptions import NoFreeRobots, UnavailableRobot
+from xremotebot.lib.exceptions import NoFreeRobots, UnavailableRobot, ReservationNotFound
 
 
 class Global(Entity):
@@ -66,15 +66,18 @@ class Global(Entity):
 
         raise nofreerobots
 
-    def reserve(self, wshandler, model, id_):
-        if not public_server:
-            return {'robot_model': model, 'robot_id': id_}
+    def reserve(self, wshandler, model, id_,time):
         reservation = Reservation.reserve(
-            wshandler.current_user,
             robot_id=id_,
             robot_model=model,
+            time=time
         )
         if reservation is None:
             raise UnavailableRobot('Unavailable robot {}:{}'.format(model, id_))
 
-        return {'robot_model': reservation.robot_model, 'robot_id': reservation.robot_id}
+        return {'robot_model': reservation.robot_model, 'robot_id': reservation.robot_id, 'time': time, 'reservation_id':reservation.id}
+
+
+    def release(self,wshandler,reservation_id):
+        Reservation.release(reservation_id)
+        return {'reservation_id': reservation_id}

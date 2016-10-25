@@ -4,3 +4,5 @@ class NoFreeRobots(Exception):
 
 class UnavailableRobot(Exception):
     pass
+class ReservationNotFound(Exception):
+	pass

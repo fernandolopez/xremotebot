@@ -11,6 +11,8 @@ def days(d):
 def hours(h):
     return timedelta(hours=h)
 
+def seconds(s):
+    return timedelta(seconds=s)
 
 def _random_secret():
     '''Generates a random secret for cookie_secret'''
@@ -32,7 +34,7 @@ log_file = 'xremotebot.log'
 port = 8000
 public_server = False
 api_key_expiration = days(700)
-reservation_expiration = hours(1)
+reservation_expiration = seconds(60)
 robots = {
     'n6': [9]
 }
