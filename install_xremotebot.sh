@@ -33,7 +33,7 @@ fi
 ' >> $HOME/.bashrc
 
 ## XRemoteBot
-https://github.com/dropsy-unlp/xremotebot.git xremotebot
+git clone https://github.com/dropsy-unlp/xremotebot.git xremotebot
 cd xremotebot
 virtualenv $PWD
 echo $PWD
