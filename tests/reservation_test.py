@@ -1,7 +1,7 @@
 from .test_helper import db
 from datetime import datetime, timedelta
 from operator import and_, or_
-from xremotebot.models.reservation import Reservation, _includes, _overlaps, _conflicts
+from xremotebot.models.reservation import Reservation, _not_overlaps
 from xremotebot.models.user import User
 import unittest
 import xremotebot.models.reservation
@@ -117,32 +117,32 @@ class ReservationTest(unittest.TestCase):
 @patch('xremotebot.models.reservation.and_', and_)
 @patch('xremotebot.models.reservation.or_', or_)
 class ReservationUtilsTest(unittest.TestCase):
-    def test_includes_date_is_the_same(self):
+    def test_not_overlaps_return_false_if_date_is_the_same(self):
         d1_from = datetime(2000, 1, 1, 11)
         d1_to = datetime(2000, 1, 1, 22)
-        self.assertTrue(_includes(d1_from, d1_to, d1_from, d1_to))
+        self.assertFalse(_not_overlaps(d1_from, d1_to, d1_from, d1_to))
 
-    def test_includes_returns_true_on_nested_dates(self):
+    def test_not_overlaps_returns_false_on_nested_dates(self):
         d1_from = datetime(2000, 1, 1, 11)
         d1_to = datetime(2000, 1, 1, 22)
         d2_from = datetime(2000, 1, 1, 13)
         d2_to = datetime(2000, 1, 1, 20)
-        self.assertTrue(_includes(d1_from, d1_to, d2_from, d2_to))
+        self.assertFalse(_not_overlaps(d1_from, d1_to, d2_from, d2_to))
 
-    def test_conflicts_return_false_on_disjoint_dates(self):
+    def test_not_overlaps_return_true_on_disjoint_dates(self):
         d1_from = datetime(2000, 1, 1, 11)
         d1_to = datetime(2000, 1, 1, 22)
         d2_from = datetime(2000, 1, 1, 8)
         d2_to = datetime(2000, 1, 1, 10)
-        self.assertFalse(_conflicts(d1_from, d1_to, d2_from, d2_to))
+        self.assertTrue(_not_overlaps(d1_from, d1_to, d2_from, d2_to))
 
-    def test_overlaps_returns_true_if_one_range_contains_the_beginning_or_the_end_of_the_other(self):
+    def test_not_overlaps_returns_false_if_one_range_contains_the_beginning_or_the_end_of_the_other(self):
         d1_from = datetime(2000, 1, 1, 11)
         d1_to = datetime(2000, 1, 1, 22)
         d2_from = datetime(2000, 1, 1, 10)
         d2_to = datetime(2000, 1, 1, 12)
-        self.assertTrue(_overlaps(d1_from, d1_to, d2_from, d2_to))
+        self.assertFalse(_not_overlaps(d1_from, d1_to, d2_from, d2_to))
 
         d2_from = datetime(2000, 1, 1, 21)
         d2_to = datetime(2000, 1, 1, 23)
-        self.assertTrue(_overlaps(d1_from, d1_to, d2_from, d2_to))
+        self.assertFalse(_not_overlaps(d1_from, d1_to, d2_from, d2_to))
