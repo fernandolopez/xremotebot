@@ -14,12 +14,14 @@ class IndexHandler(BaseHandler):
         for model, ids in conf.robots.items():
             robots[model] = []
             for id_ in ids:
-                reservations = Reservation.reserved_by_any_user(
-                    model,
-                    id_,
-                    now,
-                    until
-                )
+                # reservations = Reservation.reserved_by_any_user(
+                #    model,
+                #    id_,
+                #    now,
+                #    until
+                #)
+                # FIXME: 
+                reservations = []
                 if len(reservations) > 0:
                     late = max(map(lambda r: r.date_to, reservations))
                     robots[model].append((id_, late))
