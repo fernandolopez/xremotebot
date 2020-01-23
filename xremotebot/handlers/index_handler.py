@@ -1,3 +1,4 @@
+'''Index of the site returns a list of reserved robots'''
 import tornado.web
 from .base_handler import BaseHandler
 from xremotebot.models.reservation import Reservation
@@ -14,13 +15,14 @@ class IndexHandler(BaseHandler):
         for model, ids in conf.robots.items():
             robots[model] = []
             for id_ in ids:
+                # Reservation.reserved_by_any_user() doesn't work correctly
                 # reservations = Reservation.reserved_by_any_user(
                 #    model,
                 #    id_,
                 #    now,
                 #    until
                 #)
-                # FIXME: 
+                # FIXME:
                 reservations = []
                 if len(reservations) > 0:
                     late = max(map(lambda r: r.date_to, reservations))

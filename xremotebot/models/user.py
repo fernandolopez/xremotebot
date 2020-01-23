@@ -10,6 +10,7 @@ from ..lib import db
 
 
 class _PasswordHashedComparator(Comparator):
+    '''Comparator class for passwords stored in DB'''
     def __init__(self, password_hashed):
         self.password_hashed = password_hashed
 
@@ -42,6 +43,7 @@ class User(db.Base):
 
     @classmethod
     def login(cls, username, password, session=None):
+        '''Check user credentials, return User instance if correct, else None'''
         session = db.get_session(session)
         try:
             user = session.query(User).filter(User.username == username)\
@@ -54,6 +56,7 @@ class User(db.Base):
 
     @classmethod
     def create(cls, username, password, session=None):
+        '''Create a new user in DB'''
         session = db.get_session(session)
         user = session.query(User).filter(User.username == username).all()
         if len(user) > 0:
@@ -66,6 +69,7 @@ class User(db.Base):
 
     @classmethod
     def with_api_key(cls, api_key, session=None):
+        '''Check user API key, returns user if correct, else None'''
         session = db.get_session(session)
         try:
             user = session.query(User).filter(User.api_key == api_key).one()
@@ -78,9 +82,11 @@ class User(db.Base):
         return user
 
     def api_key_expired(self):
+        '''True if the API key has expired'''
         return self.api_key_expiration - datetime.now() < timedelta()
 
     def renew_api_key(self):
+        '''Renovation of API key to extend its life time.'''
         self.api_key_expiration =\
             datetime.now() + configuration.api_key_expiration
         self.api_key = str(uuid.uuid4())

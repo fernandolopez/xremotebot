@@ -1,3 +1,5 @@
+'''Multiplo N6 robot support for xremotebot'''
+
 import duinobot
 import xremotebot.robots.abstract_classes as abcs
 import logging

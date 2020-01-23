@@ -1,5 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+'''Setups bluetooth device files for Myro Scribbler robots, starts camera
+streaming server and starts web server for the app'''
+
 from os.path import exists, join, dirname, realpath
 import os
 import time
@@ -7,15 +10,18 @@ import xremotebot.configuration as conf
 from util import run, runbg
 import uuid
 
-secret = uuid.uuid4().hex
-
+# Get directory of the script and chdir to it in order to run
+# some scripts.
 PWD = realpath(dirname(__file__))
 os.chdir(PWD)
 
-venvpy = join(PWD, 'bin', 'python')
+# Virtual env path
+venvpy = join(PWD, '.venv', 'bin', 'python')
+# venvpy = "python"
 
 
 def kill_old_daemons():
+    '''Kills old instances of used processes'''
     for pidfile in ('node.pid', 'avconv.pid'):
         if exists(pidfile):
             with open(pidfile) as f:
@@ -27,12 +33,15 @@ def kill_old_daemons():
 
 kill_old_daemons()
 
+# Create SQLite DB if it doensn't exist
 if not exists('test.db'):
     print('Creando la base de datos')
     run(venvpy, 'deploy_db.py', stdout=None, stderr=None)
 
 
 if len(conf.robots.get('scribbler', [])) > 0:
+    # If Myro Scribbler robots are present on the configuration
+    # setup the bluetooth connections needed
     print('Creando dispositivos rfcomm para los robots scribbler')
     while True:
         print('Se requiere la contraseña de root para continuar')
@@ -43,6 +52,8 @@ if len(conf.robots.get('scribbler', [])) > 0:
             break
 
 if not conf.disable_streaming and not conf.use_embed_streaming:
+    # Unless streaming is disabled or an embed streaming iframe (as youtube)
+    # is used, start ffserver to stream a video showing the robots.
     print('Iniciando streaming de video')
     node = runbg('ffserver', '-f','ffserver.conf')
     with open('node.pid', 'w') as f:
@@ -56,6 +67,7 @@ if not conf.disable_streaming and not conf.use_embed_streaming:
     with open('avconv.pid', 'w') as f:
         f.write(str(avconv.pid))
 
+# Run the server
 try:
     run(venvpy, 'app.py', stdout=None, stderr=None)
 except KeyboardInterrupt:

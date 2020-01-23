@@ -6,6 +6,9 @@ class ConfigValueError(ConfigError): pass
 class ConfigRequiredFieldError(ConfigError): pass
 
 class Config(dict):
+    '''
+    Config file parser.
+    '''
     _comment = re.compile(r'^\s*#.+$')
     _entry   = re.compile(r'^\s*(\w+)\s*=\s*"?(\w+)"?\s*(?:#.+)?$')
     def __init__(self, configfile):

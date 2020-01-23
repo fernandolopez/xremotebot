@@ -14,9 +14,11 @@ from xremotebot.lib.exceptions import NoFreeRobots, UnavailableRobot, Reservatio
 
 class Global(Entity):
     def authentication_required(self, wshandler):
+        '''Returns True if authentication is required'''
         return public_server
 
     def authenticate(self, wshandler, api_key):
+        '''API key authentication. Returns True if authentication is succesfuly'''
         if public_server:
             wshandler.authenticated = False
             user = User.with_api_key(api_key)
@@ -27,6 +29,7 @@ class Global(Entity):
             return True
 
     def get_robots(self, wshandler):
+        '''Returns a list of all valid robots'''
         avail = []
         for model, id_ in Reservation.available(all_robots=robots):
             avail.append({
@@ -67,6 +70,7 @@ class Global(Entity):
         raise nofreerobots
 
     def reserve(self, wshandler, model, id_,time):
+        '''Reserve a robot so it cannot be used by other users for a configurable time.'''
         reservation = Reservation.reserve(
             robot_id=id_,
             robot_model=model,
@@ -79,5 +83,6 @@ class Global(Entity):
 
 
     def release(self,wshandler,reservation_id):
+        '''Release a reserved robot'''
         Reservation.release(reservation_id)
         return {'reservation_id': reservation_id}

@@ -1,4 +1,4 @@
-
+'''Custom exceptions'''
 class NoFreeRobots(Exception):
     pass
 

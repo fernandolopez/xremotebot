@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+'''Shows user API key and allows to change user password'''
 import tornado.web
 import tornado.escape
 from .base_handler import BaseHandler

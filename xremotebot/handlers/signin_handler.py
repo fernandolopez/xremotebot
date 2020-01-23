@@ -1,3 +1,4 @@
+'''Renders form to create a new user'''
 from ..models.user import User, UsernameAlreadyTaken
 from ..lib import login
 from .base_handler import BaseHandler

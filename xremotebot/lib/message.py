@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+'''
+API message parsing and generator functions.
+'''
+
 import tornado.escape
 
 def value(value, msg_id=None):
+    '''Returns a value response message'''
     obj = {
         'response': 'value',
         'value': value,
@@ -12,6 +17,7 @@ def value(value, msg_id=None):
 
 
 def error(message, msg_id=None):
+    '''Returns an error response message'''
     obj = {
         'response': 'error',
         'message': message,
@@ -21,6 +27,11 @@ def error(message, msg_id=None):
     return tornado.escape.json_encode(obj)
 
 def valid_client_message(obj):
+    '''Check if request message is correctly formated.j
+    Returns a tuple with a boolean and an optional error
+    message. If the message is invalid the boolean is False
+    and the error message is set, else the boolean is set to True
+    and the second element can be ignored.'''
     # FIXME MAYBE este tipo de errores no deberían afectar a los usuarios
     # finales por lo que el msg_id para manejar promises no sería necesario
     if not isinstance(obj, dict):

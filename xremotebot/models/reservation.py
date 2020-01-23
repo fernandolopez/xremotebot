@@ -17,8 +17,11 @@ class Reservation(Base):
 
     @classmethod
     def reserve(cls, robot_model, robot_id, time=None, session=None):
+        '''Creates a reservation for a robot starting in the current time and
+        ending in the time given by the time argument'''
         session = get_session(session)
         date_from = datetime.now()
+        # FIXME: Use the time parameter
         date_to = datetime.now() + timedelta(seconds=120)
         if date_to is None:
             date_to = date_from + configuration.reservation_expiration
@@ -38,15 +41,18 @@ class Reservation(Base):
 
     @classmethod
     def release(cls, reservation_id, session=None):
+        '''Release a reservation for a robot'''
         session = get_session(session)
         session.query(Reservation).filter_by(id=reservation_id).delete()
         session.commit()
 
     @classmethod
     def available(cls, all_robots=None, now=None, session=None):
+        '''Return a list of available robots'''
         session = get_session(session)
         reserved = set()
 
+        # FIXME: Use all_robots for something useful or remove the argument
         if all_robots is None:
             all_robots = configuration.robots
 
@@ -55,10 +61,12 @@ class Reservation(Base):
 
         all_ = {(model, str(id_)) for model, ids in all_robots.items() for id_ in ids}
 
+        # Return all configured and free robots
         return all_ - reserved
 
     @classmethod
     def all_reserved(cls, now=None, session=None):
+        '''Return currently reserved robots'''
         session = get_session(session)
         if now is None:
             now = datetime.now()

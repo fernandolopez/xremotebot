@@ -1,3 +1,5 @@
+'''Helper script to create database schemas'''
+
 from xremotebot import configuration
 from xremotebot.lib import db
 import os.path

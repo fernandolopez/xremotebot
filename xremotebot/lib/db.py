@@ -1,3 +1,4 @@
+'''Helper module for DB session managment'''
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 

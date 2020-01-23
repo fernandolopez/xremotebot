@@ -8,8 +8,11 @@ logger = logging.getLogger('xremotebot')
 
 
 class BaseHandler(tornado.web.RequestHandler):
-
+    '''
+    Base class for request handlers
+    '''
     def get_current_user(self):
+        '''Get logged user or None'''
         username = self.get_secure_cookie('username')
         logger.debug('cookie username = "%s"', username)
         if username is not None:
@@ -25,6 +28,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return user
 
     def set_current_user(self, username):
+        '''Set currently logged user in a secure cookie'''
         self.clear_all_cookies()
         self.set_secure_cookie('username', username, expires_days=None)
         self.set_cookie('unsafe_name', username, expires_days=None)

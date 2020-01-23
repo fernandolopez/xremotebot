@@ -1,3 +1,6 @@
+'''Renders a Web Page with a form to insert Javascript code
+to control the robots, the page contains an optional video stream
+of the robot.'''
 import tornado.web
 from .base_handler import BaseHandler
 from ..configuration import tls, hostname, port

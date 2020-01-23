@@ -1,3 +1,4 @@
+'''Myro Scribbler robot support for xremotebot'''
 import myro
 import xremotebot.robots.abstract_classes as abcs
 import logging
@@ -11,6 +12,7 @@ class Robot(abcs.Robot):
     mapping = None
     def __init__(self, id_):
         if Robot.mapping is None:
+            # Map robot MAC addresses to rfcomm device files
             Robot.mapping = {}
             sub = subprocess.Popen(['rfcomm', '-a'], stdout=subprocess.PIPE)
             out, err = sub.communicate()
@@ -19,11 +21,13 @@ class Robot(abcs.Robot):
                 mac = mac.split()[0]
                 Robot.mapping[mac] = '/dev/' + device
 
+        # Create an instance of the robot to control it
         self.robot = myro.Scribbler(Robot.mapping[id_])
         self.id = id_
 
 
     def motors(self, left, right):
+        # Speed for this robot is a floatin number from 0 to 1
         left = float(left) / 100.0
         right = float(right) / 100.0
         self.robot.motors(left, right)
@@ -38,7 +42,9 @@ class Robot(abcs.Robot):
         return self.ping() < distance
 
     def ping(self):
-        # Intenta aproximar la distancia en cm.
+        # This robot uses infrarred sensors to detect obstacles,
+        # the measured values must be converted to approximate
+        # distances in centimeters.
         # 5900 = 0cm
         # 500 = 95cm
         distance = max(self.robot.getObstacle())
